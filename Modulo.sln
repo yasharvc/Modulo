@@ -3,15 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modulo", "Modulo\Modulo.csproj", "{EE71787D-03D2-448D-B0A4-0C7F1A3416BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modulo", "Modulo\Modulo.csproj", "{EE71787D-03D2-448D-B0A4-0C7F1A3416BE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{07246DF6-8AA9-46C2-BDFF-8CAC43429A45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuloContracts", "ModuloContracts\ModuloContracts.csproj", "{5BF22799-9AFE-45F8-8681-30A774929C31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModuloContracts", "ModuloContracts\ModuloContracts.csproj", "{5BF22799-9AFE-45F8-8681-30A774929C31}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A450A918-73DC-43E5-9939-2B1BA0AF7AF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuloContracts.Tests", "ModuloContracts.Tests\ModuloContracts.Tests.csproj", "{B2CF68D5-0CCB-42AC-B33F-1638AC74DC2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModuloContracts.Tests", "ModuloContracts.Tests\ModuloContracts.Tests.csproj", "{B2CF68D5-0CCB-42AC-B33F-1638AC74DC2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUtility", "WebUtility\WebUtility.csproj", "{05172E9E-8F1E-4C58-8A3B-6F804F103C26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUtility.Tests", "WebUtility.Tests\WebUtility.Tests.csproj", "{046676D1-7131-4B13-A6B4-2E996CE08DC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +35,14 @@ Global
 		{B2CF68D5-0CCB-42AC-B33F-1638AC74DC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2CF68D5-0CCB-42AC-B33F-1638AC74DC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2CF68D5-0CCB-42AC-B33F-1638AC74DC2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05172E9E-8F1E-4C58-8A3B-6F804F103C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05172E9E-8F1E-4C58-8A3B-6F804F103C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05172E9E-8F1E-4C58-8A3B-6F804F103C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05172E9E-8F1E-4C58-8A3B-6F804F103C26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{046676D1-7131-4B13-A6B4-2E996CE08DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{046676D1-7131-4B13-A6B4-2E996CE08DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{046676D1-7131-4B13-A6B4-2E996CE08DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{046676D1-7131-4B13-A6B4-2E996CE08DC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +51,8 @@ Global
 		{5BF22799-9AFE-45F8-8681-30A774929C31} = {07246DF6-8AA9-46C2-BDFF-8CAC43429A45}
 		{A450A918-73DC-43E5-9939-2B1BA0AF7AF4} = {07246DF6-8AA9-46C2-BDFF-8CAC43429A45}
 		{B2CF68D5-0CCB-42AC-B33F-1638AC74DC2D} = {A450A918-73DC-43E5-9939-2B1BA0AF7AF4}
+		{05172E9E-8F1E-4C58-8A3B-6F804F103C26} = {07246DF6-8AA9-46C2-BDFF-8CAC43429A45}
+		{046676D1-7131-4B13-A6B4-2E996CE08DC0} = {A450A918-73DC-43E5-9939-2B1BA0AF7AF4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1B4593EF-D1E9-4951-AE25-1802EA025EB4}

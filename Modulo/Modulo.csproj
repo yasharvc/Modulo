@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ModuloContracts\ModuloContracts.csproj" />
+    <ProjectReference Include="..\WebUtility\WebUtility.csproj" />
   </ItemGroup>
 
 </Project>
