@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 
 namespace WebUtility
@@ -25,9 +26,17 @@ namespace WebUtility
 		public void Process()
 		{
 			ProcessQueryString();
-			//UrlEncoded Data
+			ProcessUrlEncodedData();
 			//MultiPartForm
 			//PlainText
+		}
+
+		private void ProcessUrlEncodedData()
+		{
+			var res = new UrlEncodedDataProcessor().Process(BodyString);
+			if (res.Select(m => m.Name).Intersect(RequestParameters.Select(n => n.Name)).Any())
+				throw new Exception();
+			RequestParameters.AddRange(res);
 		}
 
 		private void ProcessQueryString()

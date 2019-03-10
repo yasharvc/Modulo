@@ -7,6 +7,7 @@ namespace ModuloContracts.Data
 	public enum RequestParameterType
 	{
 		Simple,
-		File
+		File,
+		JSON
 	}
 }

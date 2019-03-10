@@ -8,6 +8,7 @@ using ModuloContracts.Exceptions.SystemExceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -73,7 +74,14 @@ namespace Modulo
 			{
 				var routeData = context.GetRouteData() ?? new RouteData();
 				PrepareRequstData(context, requestData);
-				return context.Response.WriteAsync($"{requestData.Method}->{requestData.PathParts.ToString()}\r\nFrom:{requestData.Origin}\r\n{requestData.ContentType}\r\nLength:{requestData.ContentLength}\r\n{requestData.BodyString}\r\n{requestData.Boundary}");
+				context.Response.StatusCode = 200;
+				if(requestData.Method == Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post)
+					return context.Response.WriteAsync(string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray()));
+				else
+					return context.Response.WriteAsync($"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>" +
+						$"{requestData.Method}:{requestData.PathParts.ToString()}\r\nFrom:{requestData.Origin}\r\n{requestData.ContentType}\r\nLength:" +
+						$"{requestData.ContentLength}\r\nBodyString:{requestData.BodyString}\r\nBoundary:{requestData.Boundary}\r\n" +
+						$"{string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray())}");
 			}
 			catch (UnknownUrlException unknownUrlException)
 			{
@@ -92,12 +100,15 @@ namespace Modulo
 			SetHeaders(context, requestData);
 			SetBodyData(context, requestData);
 			SetBodyStringData(requestData);
+			SetQueryString(context, requestData);
 			SetParameters(context, requestData);
 		}
 
 		private void SetParameters(HttpContext context, RequestData requestData)
 		{
-			throw new NotImplementedException();
+			var requestParser = new RequestBodyParser(requestData);
+			requestParser.Process();
+			requestData.RequestParameters = requestParser.RequestParameters;
 		}
 
 		private async void SetBodyData(HttpContext context, RequestData requestData)
