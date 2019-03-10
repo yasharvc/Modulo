@@ -30,7 +30,7 @@ namespace ModuloContracts.Web
 		}
 		public override string ToString()
 		{
-			return $"/(Area){Area}/(ModuleName){ModuleName}/(Controller){Controller}/(Action){Action}?{QueryString}";
+			return $"{(Area.Length > 0 ? "/" + Area : "")}{(ModuleName.Length > 0 ? "/" + ModuleName : "")}{(Controller.Length > 0 ? "/" + Controller : "")}{(Action.Length > 0 ? "/" + Action : "")}{(QueryString.Length > 0 ? "?" + QueryString : "")}";
 		}
 	}
 }

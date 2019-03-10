@@ -4,9 +4,11 @@ using System.Text;
 
 namespace ModuloContracts.Enums
 {
-	public enum HttpMethod
+	public enum FormType
 	{
-		GET,
-		POST
+		None,
+		MultipartFormData,
+		TextPlain,
+		URLEncoded
 	}
 }

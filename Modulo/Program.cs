@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using WebUtility;
@@ -68,12 +71,11 @@ namespace Modulo
 			var requestData = new RequestData();
 			try
 			{
-				SetRequestDataPathParts(context,requestData);
-				SetRequestDataMethodType(context, requestData);
-				SetRequestDataMethodType(context, requestData);
-				return context.Response.WriteAsync(requestData.PathParts.ToString());
+				var routeData = context.GetRouteData() ?? new RouteData();
+				PrepareRequstData(context, requestData);
+				return context.Response.WriteAsync($"{requestData.Method}->{requestData.PathParts.ToString()}\r\nFrom:{requestData.Origin}\r\n{requestData.ContentType}\r\nLength:{requestData.ContentLength}\r\n{requestData.BodyString}\r\n{requestData.Boundary}");
 			}
-			catch(UnknownUrlException unknownUrlException)
+			catch (UnknownUrlException unknownUrlException)
 			{
 				return context.Response.WriteAsync($"Unknown url: {unknownUrlException.Message}");
 			}
@@ -83,11 +85,42 @@ namespace Modulo
 			}
 		}
 
-		private void SetRequestDataPathParts(HttpContext context, RequestData requestData) => requestData.PathParts = new PathResolver().GetPathParts(context.Request.Path, context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "");
+		private void PrepareRequstData(HttpContext context, RequestData requestData)
+		{
+			SetPathParts(context, requestData);
+			SetMethodType(context, requestData);
+			SetHeaders(context, requestData);
+			SetBodyData(context, requestData);
+			SetBodyStringData(requestData);
+			SetParameters(context, requestData);
+		}
 
-		private static void SetRequestDataMethodType(HttpContext context, RequestData res) => res.Method = context.Request.GetMethod();
+		private void SetParameters(HttpContext context, RequestData requestData)
+		{
+			throw new NotImplementedException();
+		}
 
-		private void SetRequestDataQueryString(HttpContext context, RequestData requestData) => requestData.QueryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
+		private async void SetBodyData(HttpContext context, RequestData requestData)
+		{
+			using (var ms = new MemoryStream())
+			{
+				await context.Request.Body.CopyToAsync(ms);
+				requestData.Body = ms.ToArray();
+			}
+		}
+
+		private void SetBodyStringData(RequestData requestData)
+		{
+			requestData.BodyString = Encoding.UTF8.GetString(requestData.Body);
+		}
+
+		private void SetHeaders(HttpContext context, RequestData requestData) => requestData.Headers = (Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpRequestHeaders)context.Request.Headers;
+
+		private void SetPathParts(HttpContext context, RequestData requestData) => requestData.PathParts = new PathResolver().GetPathParts(context.Request.Path, context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "");
+
+		private void SetMethodType(HttpContext context, RequestData res) => res.Method = context.Request.GetMethod();
+
+		private void SetQueryString(HttpContext context, RequestData requestData) => requestData.QueryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
 
 		private string GetErrorPage()
 		{

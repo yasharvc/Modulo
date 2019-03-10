@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ModuloContracts.Enums;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using ModuloContracts.Exceptions.SystemExceptions;
 using System;
 using System.Collections.Generic;
@@ -14,9 +14,9 @@ namespace WebUtility
 		{
 			var method = request.Method.ToLower().Trim();
 			if (method.Equals("post"))
-				return HttpMethod.POST;
+				return HttpMethod.Post;
 			if (method.Equals("get"))
-				return HttpMethod.POST;
+				return HttpMethod.Get;
 			throw new HttpMethodNotFoundException(request.Method);
 		}
 	}
