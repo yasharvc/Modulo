@@ -9,7 +9,7 @@ namespace WebUtility
 		public bool IsStaticFile(string path)
 		{
 			var first = path.Split('?')[0];
-			var lastpart = first.Substring(first.LastIndexOf('/')).Replace("/", "");
+			var lastpart = first.Substring(first.LastIndexOf('/'));
 			return lastpart.Contains(".");
 		}
 	}

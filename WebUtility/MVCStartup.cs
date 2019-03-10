@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using ModuloContracts.Data;
 using System;
 using System.Collections.Generic;
 
@@ -13,22 +14,22 @@ namespace WebUtility
 {
 	public class MVCStartup
 	{
-		public void Configuration(IWebHostBuilder builder,IHostingEnvironment environment)
+		public void Configuration(IWebHostBuilder builder, WebApplicationData environment)
 		{
 			builder.ConfigureAppConfiguration((hostingContext, config) =>
 			{
-				environment = hostingContext.HostingEnvironment;
+				environment.Environment = hostingContext.HostingEnvironment;
 			});
 		}
-		public void ConfigureService(IWebHostBuilder builder,List<Type> singelton = null)
+		public void ConfigureService(IWebHostBuilder builder,Dictionary<Type,Type> singeltons = null)
 		{
 			builder.ConfigureServices(services =>
 			{
 				services.AddMvc();
-				if (singelton != null)
+				if (singeltons != null)
 				{
-					foreach (var item in singelton)
-						services.AddSingleton(item);
+					foreach (var singelton in singeltons)
+						services.AddSingleton(singelton.Key,singelton.Value);
 				}
 				services.AddRouting();
 				services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using ModuloContracts.Data;
+using ModuloContracts.Exceptions.SystemExceptions;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web;
 using WebUtility;
 
 namespace Modulo
@@ -21,10 +25,11 @@ namespace Modulo
 		{
 			var x = WebHost.CreateDefaultBuilder(args);
 			var StartupHandler = new MVCStartup();
-			StartupHandler.Configuration(x, WebApplicationData.Environment);
+			StartupHandler.Configuration(x, WebApplicationData);
 			StartupHandler.ConfigureService(x, GetSingeltonServiceList());
 			return x.Configure(app =>
 			{
+				WebApplicationData.Application = app;
 				if (WebApplicationData.Environment.IsDevelopment())
 					app.UseDeveloperExceptionPage();
 				else
@@ -44,29 +49,56 @@ namespace Modulo
 				//AddAuthenticationLayer(app);
 
 				//SetupSystemProvider(manager);
-
 				//SetupInvokationHub(manager, app.ApplicationServices);
 			}).Build();
 		}
 
 		private void AddPluginsRouting(IApplicationBuilder app)
 		{
-			//app.Use(async (context, next) =>
-			//{
-			//	if(context.Response.StatusCode == 404)
-			//		await Handle404(context, next);
-			//});
+			app.Use(async (context, next) =>
+			{
+				await next();
+				if (context.Response.StatusCode == 404 && !new UrlUtility().IsStaticFile(context.Request.Path))
+					await Handle404(context, next);
+			});
 		}
+
+		private Task Handle404(HttpContext context, Func<Task> next)
+		{
+			var requestData = new RequestData();
+			try
+			{
+				SetRequestDataPathParts(context,requestData);
+				SetRequestDataMethodType(context, requestData);
+				SetRequestDataMethodType(context, requestData);
+				return context.Response.WriteAsync(requestData.PathParts.ToString());
+			}
+			catch(UnknownUrlException unknownUrlException)
+			{
+				return context.Response.WriteAsync($"Unknown url: {unknownUrlException.Message}");
+			}
+			catch (HttpMethodNotFoundException httpMethodNotFoundException)
+			{
+				return context.Response.WriteAsync($"Illegal method name: {httpMethodNotFoundException.Message} ->{requestData.PathParts.ToString()}");
+			}
+		}
+
+		private void SetRequestDataPathParts(HttpContext context, RequestData requestData) => requestData.PathParts = new PathResolver().GetPathParts(context.Request.Path, context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "");
+
+		private static void SetRequestDataMethodType(HttpContext context, RequestData res) => res.Method = context.Request.GetMethod();
+
+		private void SetRequestDataQueryString(HttpContext context, RequestData requestData) => requestData.QueryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
 
 		private string GetErrorPage()
 		{
 			return "/Home/Error";
 		}
 
-		private List<Type> GetSingeltonServiceList()
+		private Dictionary<Type,Type> GetSingeltonServiceList()
 		{
 			//Manager()
-			return new List<Type>();
+			var res = new Dictionary<Type, Type>();
+			return res;
 		}
 
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
