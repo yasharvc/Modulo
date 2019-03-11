@@ -4,36 +4,35 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using Utility;
 
 namespace WebUtility
 {
 	public class RequestBodyParser
 	{
-		private List<byte> BodyBytes { get; set; }
-		private string BodyString { get; set; }
-		private NameValueCollection QueryString { get; set; }
+		
+		private RequestData RequestData { get; set; }
 
 		public List<RequestParameter> RequestParameters { get; set; } = new List<RequestParameter>();
 
-		public RequestBodyParser(RequestData request)
-		{
-			BodyBytes = new List<byte>();
-			BodyBytes.AddRange(request.Body);
-			BodyString = request.BodyString;
-			QueryString = request.QueryString;
-		}
+		public RequestBodyParser(RequestData request) => RequestData = request;
 
 		public void Process()
 		{
 			ProcessQueryString();
 			ProcessUrlEncodedData();
-			//MultiPartForm
-			//PlainText
+			ProcessMultiPartForm();
+			ProcessPlainText();
 		}
+
+		private void ProcessPlainText() => RequestParameters.AddRange(new PlainTextProcessor(RequestData).Process());
+
+		private void ProcessMultiPartForm() => RequestParameters.AddRange(new MultiPartFormProcessor(RequestData).Process());
+
 
 		private void ProcessUrlEncodedData()
 		{
-			var res = new UrlEncodedDataProcessor().Process(BodyString);
+			var res = new UrlEncodedDataProcessor().Process(RequestData.BodyString);
 			if (res.Select(m => m.Name).Intersect(RequestParameters.Select(n => n.Name)).Any())
 				throw new Exception();
 			RequestParameters.AddRange(res);
@@ -41,12 +40,12 @@ namespace WebUtility
 
 		private void ProcessQueryString()
 		{
-			foreach (var key in QueryString.AllKeys)
+			foreach (var key in RequestData.QueryString.AllKeys)
 			{
 				RequestParameters.Add(new RequestParameter
 				{
 					Name = key,
-					Value = QueryString[key],
+					Value = RequestData.QueryString[key],
 					Type = RequestParameterType.Simple
 				});
 			}

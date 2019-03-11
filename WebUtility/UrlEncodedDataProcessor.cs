@@ -10,11 +10,15 @@ namespace WebUtility
 {
 	public class UrlEncodedDataProcessor
 	{
-
+		public bool IsUrlEncoded(string data) => !data.StartsWith("--") && !data.Contains('\n') && !data.Contains('\r');
 		public List<RequestParameter> Process(string data)
 		{
-			var x = HttpUtility.ParseQueryString(data);
-			return ExtractContents(x);
+			if (IsUrlEncoded(data))
+			{
+				var x = HttpUtility.ParseQueryString(data);
+				return ExtractContents(x);
+			}
+			return new List<RequestParameter>();
 		}
 
 		private List<RequestParameter> ExtractContents(NameValueCollection x)
