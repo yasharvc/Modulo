@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
+using ModuloContracts.Web.UserAgent;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,6 +71,8 @@ namespace Modulo
 		private Task Handle404(HttpContext context, Func<Task> next)
 		{
 			var requestData = new RequestData();
+			requestData.HttpContext = context;
+			requestData.UserAgent = new UserAgent(context.Request.Headers["User-Agent"]);
 			try
 			{
 				var routeData = context.GetRouteData() ?? new RouteData();
