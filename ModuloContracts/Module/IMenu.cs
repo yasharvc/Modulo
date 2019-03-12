@@ -4,9 +4,9 @@ namespace ModuloContracts.Module
 {
 	public interface IMenu
 	{
-		string Title { get; set; }
-		string Icon { get; set; }
-		string Link { get; }
+		string Title { get; }
+		string Icon { get; }
+		Link Link { get; }
 		MenuLegendName MenuLegend { get; }
 		List<IMenu> SubMenus { get; }
 	}

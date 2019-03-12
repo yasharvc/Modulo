@@ -6,8 +6,8 @@ namespace ModuloContracts.Module
 	{
 		public string Title { get; set; }
 		public string Icon { get; set; }
-		public string Link { get; set; }
-		public List<IMenu> SubMenus { get; } = new List<IMenu>();
+		public Link Link { get; set; }
+		public List<IMenu> SubMenus { get; set; } = new List<IMenu>();
 		public MenuLegendName MenuLegend { get; set; } = MenuLegendName.Custom;
 	}
 }
