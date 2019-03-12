@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DllLoader;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Modulo.Controllers
 {
@@ -6,6 +7,8 @@ namespace Modulo.Controllers
     {
         public IActionResult Index()
         {
+			Loader loader = new Loader(@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\TestModule.dll");
+			var x = loader.GetDependencies();
             return View();
         }
     }
