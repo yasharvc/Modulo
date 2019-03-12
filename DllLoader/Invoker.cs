@@ -19,25 +19,53 @@ namespace DllLoader
 
 		public T CreateInstance<T>(string ClassFullName) where T : class => Loader.GetMainAssembly().CreateInstance(ClassFullName, true) as T;
 
-		public T InvokeMethod<T>(object obj, string MethodName, IEnumerable<Type> CustomAttributes, params object[] Parameters) where T:class
+		public T InvokeMethod<T>(object obj, string MethodName, IEnumerable<Type> CustomAttributes, params object[] Parameters) where T : class
 		{
 			try
 			{
-				var method = GetMethod(obj, MethodName,CustomAttributes,Parameters.Length);
+				var method = GetMethod(obj, MethodName, CustomAttributes, Parameters.Length);
 				var convertedParameters = ConvertParameteres(method, Parameters);
-				return method.Invoke(obj, convertedParameters) as T;
+				return InvokeMethodWithConvertedParameters<T>(obj, method, convertedParameters);
 			}
 			catch (MethodNotFoundException e)
 			{
 				throw e;
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				throw e;
 			}
 		}
 
-		private object[] ConvertParameteres(MethodInfo method, object[] parameters)
+		public T InvokeMethod<T>(object obj, string MethodName, IEnumerable<Type> CustomAttributes, Dictionary<string,object> Parameters) where T : class
+		{
+			try
+			{
+				var method = GetMethod(obj, MethodName, CustomAttributes, Parameters.Count);
+				var convertedParameters = ConvertParameteres(method, Parameters.Values.ToArray());
+				return InvokeMethodWithConvertedParameters<T>(obj, method, convertedParameters);
+			}
+			catch (MethodNotFoundException e)
+			{
+				throw e;
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
+		private T InvokeMethodWithConvertedParameters<T>(object obj,MethodInfo method, Dictionary<string, object> convertedParameters) where T:class
+		{
+			var parameters = method.GetParameters();
+			object[] orderedParams = new object[parameters.Length];
+			int i = 0;
+			foreach (var param in parameters)
+				orderedParams[i++] = convertedParameters[param.Name];
+			return method.Invoke(obj, orderedParams) as T;
+		}
+
+		private Dictionary<string,object> ConvertParameteres(MethodInfo method, object[] parameters)
 		{
 			var methodParameteres = method.GetParameters();
 			Dictionary<string,object> res = new Dictionary<string, object>();
@@ -53,7 +81,7 @@ namespace DllLoader
 					res[methodParameter.Name] = JsonConvert.DeserializeObject(parameters[i++] as string, methodParameter.ParameterType);
 				}
 			}
-			return res.Select(m => m.Value).ToArray();
+			return res;
 		}
 
 		private MethodInfo GetMethod(object obj, string methodName, IEnumerable<Type> customAttributes, int parametersCount)
