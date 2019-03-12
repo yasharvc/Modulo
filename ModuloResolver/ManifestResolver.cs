@@ -11,7 +11,7 @@ namespace ModuloResolver
 		public ManifestResolver(string pathToDll)
 		{
 			AppDomain domain = AppDomain.CurrentDomain;
-			domain.Load()
+			
 		}
 	}
 }

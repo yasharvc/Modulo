@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModuloContracts.Exceptions.SystemExceptions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,50 +13,23 @@ namespace DllLoader
 		string PathToDll { get; set; }
 		string BasePath { get; set; }
 		string FileName { get; set; }
-
-		List<string> AllDllInBasePath { get; set; } = new List<string>();
+		AppDomain appDomain { get; set; }
 
 		public Loader(string pathToDll)
 		{
 			PathToDll = pathToDll;
 			BasePath = Path.GetDirectoryName(pathToDll);
 			FileName = Path.GetFileName(pathToDll);
-			AllDllInBasePath.AddRange(Directory.GetFiles(BasePath, "*.dll"));
+			var dlls = Directory.GetFiles(BasePath, "*.dll").Select(m => m.ToLower()).Except(new List<string> { pathToDll.ToLower() });
+			appDomain = AppDomain.CurrentDomain;
 		}
 
-		private Assembly GetMainAssembly()
+		public Assembly GetMainAssembly()
 		{
 			var appDomain = AppDomain.CurrentDomain;
 			return appDomain.Load(GetDllBytes(PathToDll));
 		}
 
-		private Assembly GetAssembly(byte[] bytes)
-		{
-			return Assembly.Load(bytes);
-		}
-
-		private byte[] GetDllBytes(string pathToDll)
-		{
-			return File.ReadAllBytes(pathToDll);
-		}
-
-		public Dictionary<string,string> GetDependencies()
-		{
-			var asm = GetMainAssembly();
-			try
-			{
-				var references = asm.GetReferencedAssemblies();
-
-				foreach (var reference in references)
-				{
-					
-				}
-			}
-			finally
-			{
-				asm = null;
-				GC.Collect();
-			}
-		}
+		private byte[] GetDllBytes(string pathToDll) => File.ReadAllBytes(pathToDll);
 	}
 }
