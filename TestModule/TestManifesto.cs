@@ -40,6 +40,7 @@ namespace TestModule
 			{
 				Dictionary<string, IViewComponent> components = new Dictionary<string, IViewComponent>();
 				components["Simple"] = new SimpleViewComponent();
+				components["Simple2"] = new Simple2ViewComponent();
 				return components;
 			}
 		}
