@@ -21,7 +21,17 @@ namespace DllLoader
 
 		public object CreateInstance(Type type) => Loader.GetMainAssembly().CreateInstance(type.FullName, true);
 
-		public T CreateInstanceByParentType<T>() where T : class => CreateInstance(type: Loader.GetMainAssembly().GetTypes().Single(m => m.IsInstanceOfType(typeof(T)))) as T;
+		public T CreateInstanceByParentType<T>() where T : class
+		{
+			var types = Loader.GetMainAssembly().GetTypes();
+			foreach(var type in types)
+			{
+				if (typeof(ModuloContracts.Module.Manifesto).FullName == type.BaseType.FullName ||
+					typeof(ModuloContracts.Module.IManifest).FullName == type.BaseType.FullName)
+					return CreateInstance(type) as T;
+			}
+			throw new NotImplementedException();
+		}
 
 		public T InvokeMethod<T>(object obj, string MethodName, IEnumerable<Type> CustomAttributes, Dictionary<string,object> Parameters) where T : class
 		{

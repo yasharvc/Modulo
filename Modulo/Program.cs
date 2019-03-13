@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
+using ModuloContracts.Module;
 using ModuloContracts.Web.UserAgent;
 using System;
 using System.Collections.Generic;
@@ -172,6 +173,15 @@ namespace Modulo
 			//Manager()
 			var res = new Dictionary<Type, Type>();
 			return res;
+		}
+
+		public static IManifest GetManifest(string packageName)
+		{
+			var path = Program.ctrlToDll[packageName];
+			Loader loader = new Loader(path);
+			var invoker = new Invoker(loader);
+			var obj = invoker.CreateInstanceByParentType<IManifest>();
+			return obj;
 		}
 
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

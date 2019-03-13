@@ -11,7 +11,7 @@ namespace TestModule.Components
 	{
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
-			return await Task.FromResult((IViewComponentResult)View("~/Modules/Test/Pages/Shared/Components/KPI/KPI.cshtml", "Yashar"));
+			return await Task.FromResult((IViewComponentResult)View("~/Modules/Test/Pages/Shared/Components/KPI/KPI.cshtml"));
 		}
 	}
 }
