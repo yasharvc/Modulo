@@ -30,6 +30,11 @@ namespace DllLoader
 			return appDomain.Load(GetDllBytes(PathToDll));
 		}
 
+		public string GetFullClassName(string className)
+		{
+			return GetMainAssembly().GetTypes().Single(m => m.Name.Equals(className, StringComparison.OrdinalIgnoreCase)).FullName;
+		}
+
 		private byte[] GetDllBytes(string pathToDll) => File.ReadAllBytes(pathToDll);
 	}
 }

@@ -25,9 +25,9 @@ namespace TestModule.Controllers
 
 		[HttpPost]
 		[AllowAnonymous]
-		public IActionResult SayMyName(string Name)
+		public IActionResult SayMyName(data Name)
 		{
-			return Content($"Your name is :{Name}");
+			return View("~/Modules/Test/Views/Index.cshtml", Name);
 		}
 
 		public IActionResult WithModel(data d)

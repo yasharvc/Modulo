@@ -113,7 +113,10 @@ namespace WebUtility
 				GetNextLine(ref bodyBytes, out lineBytes, out line);
 				var contentType = GetContentType(line);
 				if (contentType == ContentType.PlainText || contentType == ContentType.Octet)
+				{
 					res.File = bodyBytes.Skip(4).SkipLast(2).ToArray();
+					res.FileName = "";
+				}
 			}
 			else
 			{

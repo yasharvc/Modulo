@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore;
+﻿using DllLoader;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
@@ -14,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using WebUtility;
+using static Modulo.Controllers.ZestController;
 
 namespace Modulo
 {
@@ -21,6 +25,10 @@ namespace Modulo
 	public class Program
 	{
 		public static WebApplicationData WebApplicationData { get; private set; } = new WebApplicationData();
+		public static Dictionary<string, string> ctrlToDll = new Dictionary<string, string>
+		{
+			{ "test",@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\testModule.dll" }
+		};
 		public static void Main(string[] args)
 		{
 			new Program().BuildWebHost(args).Run();
@@ -71,22 +79,37 @@ namespace Modulo
 		private Task Handle404(HttpContext context, Func<Task> next)
 		{
 			var requestData = new RequestData();
+				var routeData = context.GetRouteData() ?? new RouteData();
+			var actionContext = new ActionContext(context, routeData, getActionDescriptor(context));
 			requestData.HttpContext = context;
+
 			requestData.UserAgent = new UserAgent(context.Request.Headers["User-Agent"]);
 			try
 			{
-				var routeData = context.GetRouteData() ?? new RouteData();
 				PrepareRequstData(context, requestData);
 				context.Response.StatusCode = 200;
+				if(ctrlToDll.ContainsKey(requestData.PathParts.Controller.ToLower()))
+				{
+
+
+					var path = ctrlToDll[requestData.PathParts.Controller.ToLower()];
+					Loader loader = new Loader(path);
+					var invoker = new Invoker(loader);
+					var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
+					var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, new Data2 { Name = "یاشار", Age = 32 });
+					return actionResult.ExecuteResultAsync(actionContext);
+				}
 				if (requestData.Method == Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post)
 				{
 					return context.Response.WriteAsync(string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray()));
 				}
 				else
+				{
 					return context.Response.WriteAsync($"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>" +
 						$"{requestData.Method}:{requestData.PathParts.ToString()}\r\nFrom:{requestData.Origin}\r\n{requestData.ContentType}\r\nLength:" +
 						$"{requestData.ContentLength}\r\nBodyString:{requestData.BodyString}\r\nBoundary:{requestData.Boundary}\r\n" +
 						$"{string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray())}");
+				}
 			}
 			catch (UnknownUrlException unknownUrlException)
 			{
@@ -97,7 +120,10 @@ namespace Modulo
 				return context.Response.WriteAsync($"Illegal method name: {httpMethodNotFoundException.Message} ->{requestData.PathParts.ToString()}");
 			}
 		}
-
+		private ActionDescriptor getActionDescriptor(HttpContext context)
+		{
+			return new ActionDescriptor();
+		}
 		private void PrepareRequstData(HttpContext context, RequestData requestData)
 		{
 			SetPathParts(context, requestData);

@@ -8,7 +8,7 @@ using Utility;
 
 namespace Modulo.Controllers
 {
-	public class TestController : Controller
+	public class ZestController : Controller
     {
 		public IActionResult Index()
 		{

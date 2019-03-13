@@ -23,5 +23,18 @@ namespace ModuloContracts.Data
 		public byte[] Body { get; set; }
 		public string BodyString { get; set; } = "";
 		public List<RequestParameter> RequestParameters { get; set; } = new List<RequestParameter>();
+
+		public Dictionary<string,object> GetRequestParametersDictionary()
+		{
+			var res = new Dictionary<string, object>();
+			foreach (var item in RequestParameters)
+			{
+				if (item.Type == RequestParameterType.File)
+					res[item.Name] = item.File;
+				else
+					res[item.Name] = item.Value;
+			}
+			return res;
+		}
 	}
 }

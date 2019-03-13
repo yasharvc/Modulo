@@ -101,6 +101,8 @@ namespace DllLoader
 
 		private bool HasAllAttributes(IEnumerable<Type> CustomAttributes, MethodInfo method)
 		{
+			if (CustomAttributes == null)
+				return true;
 			foreach (var attr in CustomAttributes)
 				if (method.GetCustomAttribute(attr) == null)
 					return false;
