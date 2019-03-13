@@ -19,6 +19,7 @@ namespace ModuloContracts.Data
 		public string ContentType => Headers.HeaderContentType.Count > 0 ? Headers.HeaderContentType[0].Split(';')[0].Trim() : "";
 		public string Boundary => Headers.HeaderContentType.Count > 0 && Headers.HeaderContentType[0].Contains("boundary") ? Headers.HeaderContentType[0].Split(';')[1].Trim().Substring("boundary =".Length) : "";
 		public string Origin => Headers.HeaderOrigin.Count > 0 ? Headers.HeaderOrigin[0] : "";
+		public string Referer => Headers.HeaderReferer.Count > 0 ? Headers.HeaderReferer[0] : "";
 		public long ContentLength => Headers.ContentLength ?? 0;
 		public byte[] Body { get; set; }
 		public string BodyString { get; set; } = "";

@@ -19,30 +19,14 @@ namespace DllLoader
 
 		public T CreateInstance<T>(string ClassFullName) where T : class => Loader.GetMainAssembly().CreateInstance(ClassFullName, true) as T;
 
-		public T InvokeMethod<T>(object obj, string MethodName, IEnumerable<Type> CustomAttributes, params object[] Parameters) where T : class
-		{
-			try
-			{
-				var method = GetMethod(obj, MethodName, CustomAttributes, Parameters.Length);
-				var convertedParameters = ConvertParameteres(method, Parameters);
-				return InvokeMethodWithConvertedParameters<T>(obj, method, convertedParameters);
-			}
-			catch (MethodNotFoundException e)
-			{
-				throw e;
-			}
-			catch (Exception e)
-			{
-				throw e;
-			}
-		}
+		public object CreateInstance(Type type) => Loader.GetMainAssembly().CreateInstance(type.FullName, true);
 
 		public T InvokeMethod<T>(object obj, string MethodName, IEnumerable<Type> CustomAttributes, Dictionary<string,object> Parameters) where T : class
 		{
 			try
 			{
 				var method = GetMethod(obj, MethodName, CustomAttributes, Parameters.Count);
-				var convertedParameters = ConvertParameteres(method, Parameters.Values.ToArray());
+				var convertedParameters = ConvertParameteres(method, Parameters);
 				return InvokeMethodWithConvertedParameters<T>(obj, method, convertedParameters);
 			}
 			catch (MethodNotFoundException e)
@@ -68,7 +52,7 @@ namespace DllLoader
 			return res;
 		}
 
-		private Dictionary<string,object> ConvertParameteres(MethodInfo method, object[] parameters)
+		private Dictionary<string,object> ConvertParameteres(MethodInfo method, Dictionary<string,object> parameters)
 		{
 			var methodParameteres = method.GetParameters();
 			Dictionary<string,object> res = new Dictionary<string, object>();
@@ -76,11 +60,42 @@ namespace DllLoader
 			foreach(var methodParameter in methodParameteres)
 			{
 				if (methodParameter.ParameterType.IsPrimitiveType())
-					res[methodParameter.Name] = Convert.ChangeType(parameters[i++], methodParameter.ParameterType);
+					res[methodParameter.Name] = Convert.ChangeType(parameters[methodParameter.Name], methodParameter.ParameterType);
 				else
-					res[methodParameter.Name] = JsonConvert.DeserializeObject(parameters[i++].ToJson(), methodParameter.ParameterType);
+				{
+					var parStr = Convert.ChangeType(parameters[methodParameter.Name], typeof(string)) as string;
+					if (parStr.StartsWith("{") || parStr.StartsWith("["))
+						res[methodParameter.Name] = JsonConvert.DeserializeObject(parameters[methodParameter.Name].ToJson(), methodParameter.ParameterType);
+					else
+					{
+						res[methodParameter.Name] = GetObjectFromParameters(parameters, methodParameter.ParameterType);
+					}
+					i++;
+				}
 			}
 			return res;
+		}
+
+		private object GetObjectFromParameters(Dictionary<string, object> parameters, Type parameterType)
+		{
+			var props = parameterType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			var propVals = new Dictionary<string, object>();
+			foreach (var prop in props)
+			{
+				try
+				{
+					//parameterType.GetProperty(prop.Name).SetValue(res, Convert.ChangeType(parameters[prop.Name], prop.PropertyType));
+					if (prop.PropertyType.IsPrimitiveType())
+						propVals[prop.Name] = Convert.ChangeType(parameters[prop.Name], prop.PropertyType);
+					else
+						throw new NotImplementedException();
+				}
+				catch(Exception e) {
+					var str = e.Message;
+				}
+			}
+			var json = JsonConvert.SerializeObject(propVals);
+			return JsonConvert.DeserializeObject(json, parameterType);
 		}
 
 		private MethodInfo GetMethod(object obj, string methodName, IEnumerable<Type> customAttributes, int parametersCount)
@@ -94,7 +109,7 @@ namespace DllLoader
 
 		private bool IsMethodEligable(string MethodName, IEnumerable<Type> CustomAttributes, int ParametersCount, MethodInfo method)
 		{
-			return method.GetParameters().Length == ParametersCount &&
+			return //method.GetParameters().Length == ParametersCount &&
 								method.Name.Equals(MethodName, StringComparison.OrdinalIgnoreCase)
 								&& HasAllAttributes(CustomAttributes, method);
 		}

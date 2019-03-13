@@ -90,13 +90,11 @@ namespace Modulo
 				context.Response.StatusCode = 200;
 				if(ctrlToDll.ContainsKey(requestData.PathParts.Controller.ToLower()))
 				{
-
-
 					var path = ctrlToDll[requestData.PathParts.Controller.ToLower()];
 					Loader loader = new Loader(path);
 					var invoker = new Invoker(loader);
 					var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
-					var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, new Data2 { Name = "یاشار", Age = 32 });
+					var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
 					return actionResult.ExecuteResultAsync(actionContext);
 				}
 				if (requestData.Method == Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post)
