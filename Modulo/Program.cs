@@ -27,7 +27,7 @@ namespace Modulo
 		public static WebApplicationData WebApplicationData { get; private set; } = new WebApplicationData();
 		public static Dictionary<string, string> ctrlToDll = new Dictionary<string, string>
 		{
-			{ "test",@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\testModule.dll" }
+			{ "testmodule",@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\testModule.dll" }
 		};
 		public static void Main(string[] args)
 		{
@@ -88,9 +88,9 @@ namespace Modulo
 			{
 				PrepareRequstData(context, requestData);
 				context.Response.StatusCode = 200;
-				if(ctrlToDll.ContainsKey(requestData.PathParts.Controller.ToLower()))
+				if(ctrlToDll.ContainsKey(requestData.PathParts.ModuleName.ToLower()))
 				{
-					var path = ctrlToDll[requestData.PathParts.Controller.ToLower()];
+					var path = ctrlToDll[requestData.PathParts.ModuleName.ToLower()];
 					Loader loader = new Loader(path);
 					var invoker = new Invoker(loader);
 					var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));

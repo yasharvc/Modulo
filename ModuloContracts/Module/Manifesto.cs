@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ModuloContracts.Enums;
 
 namespace ModuloContracts.Module
 {
@@ -22,6 +20,8 @@ namespace ModuloContracts.Module
 		public virtual IEnumerable<IMenu> Menus => new List<IMenu>();
 
 		public virtual bool IsSystemModule => false;
+
+		public virtual Dictionary<string, IViewComponent> HomePageViewComponents => new Dictionary<string, IViewComponent>();
 
 		public virtual void OnConfigure() { }
 	}

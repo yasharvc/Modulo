@@ -1,9 +1,12 @@
-﻿using ModuloContracts.Enums;
+﻿using Microsoft.AspNetCore.Mvc;
+using ModuloContracts;
+using ModuloContracts.Enums;
 using ModuloContracts.Module;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestModule.Components;
 using TestModule.Controllers;
 
 namespace TestModule
@@ -29,6 +32,15 @@ namespace TestModule
 				};
 				res.Add(menu);
 				return res;
+			}
+		}
+
+		public override Dictionary<string, IViewComponent> HomePageViewComponents {
+			get
+			{
+				Dictionary<string, IViewComponent> components = new Dictionary<string, IViewComponent>();
+				components["Simple"] = new SimpleViewComponent();
+				return components;
 			}
 		}
 	}

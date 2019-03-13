@@ -1,4 +1,5 @@
-﻿using ModuloContracts.Enums;
+﻿using Microsoft.AspNetCore.Mvc;
+using ModuloContracts.Enums;
 using ModuloContracts.Module;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,6 @@ namespace ModuloContracts.Module
 		IEnumerable<IMenu> Menus { get; }
 		bool IsSystemModule { get; }
 		void OnConfigure();
+		Dictionary<string, IViewComponent> HomePageViewComponents { get; }
 	}
 }

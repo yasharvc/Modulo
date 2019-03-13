@@ -4,18 +4,23 @@
 }
 <button type="button" class="w3-amber w3-btn" onclick="ajax1()">$.ajax 1</button>
 <button type="button" onclick="post1()">$.post 1</button>
-<form method="post" action="/Test/SayMyName" enctype="application/x-www-form-urlencoded">
+<form method="post" action="/TestModule/Test/SayMyName" enctype="application/x-www-form-urlencoded">
 	<input id="Name" name="Name" placeholder="Name..." />
 	<input id="Age" name="Age" type="number" placeholder="Age..." />
 	<button type="submit">ارسال</button>
 </form>
+
+<hr />
+@(await Component.InvokeAsync("HomeWidgets"))
+<hr />
+
 <div id="result">
 
 </div>
 <script>
 	function ajax1() {
 		$.ajax({
-			url: '/Test/WithModel',
+			url: '/TestModule/Test/WithModel',
 			data: {
 				d: {
 					Name: "احسان",
@@ -31,7 +36,7 @@
 	}
 	function post1() {
 		$.post({
-			url: '/Test/WithModel2',
+			url: '/TestModule/Test/WithModel2',
 			data: {
 				d: [
 					{ Name: "Farhad", Age: 22 },
