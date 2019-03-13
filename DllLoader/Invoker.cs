@@ -11,7 +11,7 @@ namespace DllLoader
 {
 	public class Invoker
 	{
-		Loader Loader { get; set; }
+		private Loader Loader { get; set; }
 		public Invoker(Loader loader)
 		{
 			Loader = loader;
@@ -62,7 +62,10 @@ namespace DllLoader
 			int i = 0;
 			foreach (var param in parameters)
 				orderedParams[i++] = convertedParameters[param.Name];
-			return method.Invoke(obj, orderedParams) as T;
+			var resultObject = method.Invoke(obj, orderedParams);
+			if (!(resultObject is T res))
+				res = Extenstions.FromObject<T>(resultObject);
+			return res;
 		}
 
 		private Dictionary<string,object> ConvertParameteres(MethodInfo method, object[] parameters)
@@ -73,13 +76,9 @@ namespace DllLoader
 			foreach(var methodParameter in methodParameteres)
 			{
 				if (methodParameter.ParameterType.IsPrimitiveType())
-				{
 					res[methodParameter.Name] = Convert.ChangeType(parameters[i++], methodParameter.ParameterType);
-				}
 				else
-				{
-					res[methodParameter.Name] = JsonConvert.DeserializeObject(parameters[i++] as string, methodParameter.ParameterType);
-				}
+					res[methodParameter.Name] = JsonConvert.DeserializeObject(parameters[i++].ToJson(), methodParameter.ParameterType);
 			}
 			return res;
 		}

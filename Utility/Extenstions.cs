@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Web;
 
@@ -8,6 +10,15 @@ namespace Utility
 {
 	public static class Extenstions
 	{
+		public static T FromObject<T>(object source) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source));
+
+		public static string ToJson(this object o)
+		{
+			if (o is string)
+				return o as string;
+			return JsonConvert.SerializeObject(o);
+		}
+
 		public static IEnumerable<byte> ToByte(this string data, Encoding encoding = null)
 		{
 			encoding = encoding ?? Encoding.UTF8;

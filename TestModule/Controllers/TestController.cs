@@ -13,6 +13,10 @@ namespace TestModule.Controllers
 		{
 			public string Name { get; set; }
 			public int Age { get; set; }
+			public override string ToString()
+			{
+				return $"{Name}-{Age}";
+			}
 		}
 		public IActionResult Index()
         {
@@ -29,6 +33,25 @@ namespace TestModule.Controllers
 		public IActionResult WithModel(data d)
 		{
 			return Content($"Your name is :{d.Name} with {d.Age} old age!");
+		}
+
+		public IActionResult WithModel2(List<data> d)
+		{
+			string res = "";
+			foreach (var dd in d)
+			{
+				res += (res.Length > 0 ? "<br/>" : "") + dd.ToString();
+			}
+			return Content(res);
+		}
+
+		public List<data> GetData(List<data> da,int add)
+		{
+			foreach (var item in da)
+				item.Age += add;
+			var res = new List<data> { new data { Name = "Mamad", Age = 38 }, new data { Age = 20, Name = "ali" } };
+			res.AddRange(da);
+			return res;
 		}
     }
 }
