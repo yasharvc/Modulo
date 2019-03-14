@@ -32,5 +32,7 @@ namespace ModuloContracts.Web
 		{
 			return $"{(Area.Length > 0 ? "/" + Area : "")}{(ModuleName.Length > 0 ? "/" + ModuleName : "")}{(Controller.Length > 0 ? "/" + Controller : "")}{(Action.Length > 0 ? "/" + Action : "")}{(QueryString.Length > 0 ? "?" + QueryString : "")}";
 		}
+
+		public static implicit operator string(PathParts p) => p.ToString();
 	}
 }

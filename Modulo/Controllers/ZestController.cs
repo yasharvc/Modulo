@@ -1,11 +1,5 @@
-﻿using DllLoader;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using Utility;
 
 namespace Modulo.Controllers
 {
@@ -26,7 +20,7 @@ namespace Modulo.Controllers
 			//var res = invoker.InvokeMethod<List<Data2>>(obj, "GetData", new List<Type>(), new Dictionary<string, object>{
 			//	{ "da", d.ToJson() } ,{"add", 15 }
 			//});
-			ViewBag.Widgets = Program.GetManifest("testmodule").HomePageViewComponents.Keys.ToList();
+			//ViewBag.Widgets = Program.GetManifest("testmodule").HomePageViewComponents.Keys.ToList();
 			return View();
 		}
 		public class Data2

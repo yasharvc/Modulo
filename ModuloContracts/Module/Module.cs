@@ -8,9 +8,16 @@ namespace ModuloContracts.Module
 {
 	public class Module
 	{
-		string PathToDll { get; set; }
-		IManifest Manifest { get; set; }
-		ModuleStatus Status { get; set; } = ModuleStatus.Disable;
+		public string PathToDll { get; private set; }
+		public IManifest Manifest { get; private set; }
+		public ModuleStatus Status { get; private set; } = ModuleStatus.Disable;
+
+		public Module(string pathToDll,IManifest manifest,ModuleStatus status)
+		{
+			PathToDll = pathToDll;
+			Manifest = manifest;
+			Status = status;
+		}
 
 		public static implicit operator ModuleInformation(Module mdl)
 		{

@@ -1,5 +1,4 @@
-﻿using DllLoader;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +10,7 @@ using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
 using ModuloContracts.Web.UserAgent;
+using ModuloManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,10 +27,7 @@ namespace Modulo
 	public class Program
 	{
 		public static WebApplicationData WebApplicationData { get; private set; } = new WebApplicationData();
-		public static Dictionary<string, string> ctrlToDll = new Dictionary<string, string>
-		{
-			{ "testmodule",@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\testModule.dll" }
-		};
+		public static Manager Manager => WebApplicationData.GetService<Manager>();
 		public static void Main(string[] args)
 		{
 			new Program().BuildWebHost(args).Run();
@@ -59,6 +56,7 @@ namespace Modulo
 						template: "{controller=Home}/{action=Index}/{id?}");
 				});
 				app.UseMvcWithDefaultRoute();
+				SamplePlugIns();
 				//var manager = app.ApplicationServices.GetRequiredService<Manager>();
 				//SetupEvents(manager);
 				//AddAuthenticationLayer(app);
@@ -66,6 +64,12 @@ namespace Modulo
 				//SetupSystemProvider(manager);
 				//SetupInvokationHub(manager, app.ApplicationServices);
 			}).Build();
+		}
+
+		private void SamplePlugIns()
+		{
+			Manager.AddModuleByDllPath(@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\TestModule.dll"
+									 , @"G:\Modulo\Modules\HomePageAuthonticator\bin\Debug\netcoreapp2.1\HomePageAuthonticator.dll");
 		}
 
 		private void AddPluginsRouting(IApplicationBuilder app)
@@ -78,34 +82,50 @@ namespace Modulo
 			});
 		}
 
-		private Task Handle404(HttpContext context, Func<Task> next)
+		private async Task Handle404(HttpContext context, Func<Task> next)
 		{
 			var requestData = new RequestData();
 				var routeData = context.GetRouteData() ?? new RouteData();
 			var actionContext = new ActionContext(context, routeData, getActionDescriptor(context));
 			requestData.HttpContext = context;
-
 			requestData.UserAgent = new UserAgent(context.Request.Headers["User-Agent"]);
 			try
 			{
 				PrepareRequstData(context, requestData);
 				context.Response.StatusCode = 200;
-				if(ctrlToDll.ContainsKey(requestData.PathParts.ModuleName.ToLower()))
+				var mdl = Manager.GetUrlFilterByRequestData(context, requestData);
+				if(mdl != null)
 				{
-					var path = ctrlToDll[requestData.PathParts.ModuleName.ToLower()];
-					Loader loader = new Loader(path);
-					var invoker = new Invoker(loader);
-					var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
-					var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
-					return actionResult.ExecuteResultAsync(actionContext);
+					var url = mdl.Manifest.UrlFilter;
+					if (url.IsAllowed(context, requestData))
+						;//Resolve Module and run
+					else
+					{
+						await Task.Run(() =>
+						{
+							var x = url.GetRedirectionPath();
+							x.ModuleName = mdl.Manifest.ModuleName;
+							context.Response.Redirect(x);
+						});
+						return;
+					}
+				}
+				//if(ctrlToDll.ContainsKey(requestData.PathParts.ModuleName.ToLower()))
+				{
+					//var path = ctrlToDll[requestData.PathParts.ModuleName.ToLower()];
+					//Loader loader = new Loader(path);
+					//var invoker = new Invoker(loader);
+					//var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
+					//var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
+					//return actionResult.ExecuteResultAsync(actionContext);
 				}
 				if (requestData.Method == Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post)
 				{
-					return context.Response.WriteAsync(string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray()));
+					await context.Response.WriteAsync(string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray()));
 				}
 				else
 				{
-					return context.Response.WriteAsync($"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>" +
+					await context.Response.WriteAsync($"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>" +
 						$"{requestData.Method}:{requestData.PathParts.ToString()}\r\nFrom:{requestData.Origin}\r\n{requestData.ContentType}\r\nLength:" +
 						$"{requestData.ContentLength}\r\nBodyString:{requestData.BodyString}\r\nBoundary:{requestData.Boundary}\r\n" +
 						$"{string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray())}");
@@ -113,11 +133,11 @@ namespace Modulo
 			}
 			catch (UnknownUrlException unknownUrlException)
 			{
-				return context.Response.WriteAsync($"Unknown url: {unknownUrlException.Message}");
+				await context.Response.WriteAsync($"Unknown url: {unknownUrlException.Message}");
 			}
 			catch (HttpMethodNotFoundException httpMethodNotFoundException)
 			{
-				return context.Response.WriteAsync($"Illegal method name: {httpMethodNotFoundException.Message} ->{requestData.PathParts.ToString()}");
+				await context.Response.WriteAsync($"Illegal method name: {httpMethodNotFoundException.Message} ->{requestData.PathParts.ToString()}");
 			}
 		}
 		private ActionDescriptor getActionDescriptor(HttpContext context)
@@ -171,8 +191,10 @@ namespace Modulo
 
 		private Dictionary<Type,Type> GetSingeltonServiceList()
 		{
-			//Manager()
-			var res = new Dictionary<Type, Type>();
+			var res = new Dictionary<Type, Type>
+			{
+				{ typeof(Manager), typeof(Manager) }
+			};
 			return res;
 		}
 

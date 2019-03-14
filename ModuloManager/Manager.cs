@@ -1,29 +1,30 @@
-﻿using DllLoader;
+﻿using Microsoft.AspNetCore.Http;
+using ModuloContracts.Data;
+using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
-using System;
+using ModuloContracts.Web;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace ModuloManager
 {
 	public class Manager
 	{
-		public Dictionary<string, System.Reflection.Module> Moduels { get; private set; } = new Dictionary<string, System.Reflection.Module>();
+		public Dictionary<string, Module> Moduels { get; private set; } = new Dictionary<string, Module>();
 
-		public void AddModuleByDllPath(string Path)
+		public void AddModuleByDllPath(params string[] Paths)
 		{
-			Loader loader = new Loader(Path);
-			Invoker invoker = new Invoker(loader);
-			invoker.
+			foreach (var Path in Paths)
+			{
+				var mdl = new ManifestResolver(Path);
+				Moduels[mdl.Module.Manifest.ModuleName] = mdl.Module;
+			}
 		}
 
-		public static IManifest GetManifest(string packageName)
+		public Module GetUrlFilterByPathParts(HttpContext context,PathParts pathParts)
 		{
-			var path = Program.ctrlToDll[packageName];
-			Loader loader = new Loader(path);
-			var invoker = new Invoker(loader);
-			var obj = invoker.CreateInstanceByParentType<IManifest>();
-			return obj;
+			return Moduels.Select(m => m.Value).FirstOrDefault(k => k.Manifest.UrlFilter != null && k.Manifest.UrlFilter.IsAllowed(context, new RequestData { PathParts = pathParts }));
 		}
+		public Module GetUrlFilterByRequestData(HttpContext context, RequestData requestData) => Moduels.Select(m => m.Value).FirstOrDefault(m => m.Manifest.UrlFilter != null);
 	}
 }

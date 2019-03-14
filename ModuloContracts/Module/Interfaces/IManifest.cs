@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ModuloContracts.Enums;
-using ModuloContracts.Module;
-using ModuloContracts.UrlFilter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ModuloContracts.Module.Interfaces

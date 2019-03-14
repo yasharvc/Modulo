@@ -14,7 +14,7 @@ namespace HomePageAuthonticator
 
 		public override string Description => "ماژولی که اعتبار کاربر را برای استفاده از صفحه می سنجد";
 
-
+		public override IUrlFilter UrlFilter => new HomePageUrlFilter();
 	}
 
 	public class HomePageUrlFilter : IUrlFilter
@@ -36,7 +36,7 @@ namespace HomePageAuthonticator
 
 		private bool IsPartsEligable(PathParts parts)
 		{
-			var res = parts.Controller.ToLower() == "security" && parts.Action.ToLower() == "login" && parts.ModuleName == "" && parts.Area == "";
+			var res = parts.Controller.ToLower() == "security" && parts.Action.ToLower() == "login" && parts.ModuleName.ToLower() == new HomePageManifesto().ModuleName.ToLower() && parts.Area == "";
 			res |= parts.Controller.ToLower() == "Management";
 			return res;
 		}

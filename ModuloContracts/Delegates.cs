@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace ModuloContracts
 {
 	public delegate object ServiceInvokeEventArgs(string ModuleName, string FullClassName, string ServiceName, params dynamic[] Parameters);
-	public delegate void RenderViewEventArgs(BaseController controller);
+	//public delegate void RenderViewEventArgs(BaseController controller);
 	public delegate ISystemServiceProvider SystemServiceProviderEventArgs();
 	public delegate string StringArg();
 	public delegate string JsonArg();
