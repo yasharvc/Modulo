@@ -13,10 +13,6 @@ namespace ModuloContracts.Module
 		public bool IsSystemModule { get; set; }
 		public ModuleStatus Status { get; set; }
 
-		public static implicit operator ModuleInformation(Module mdl)
-		{
-			var m = mdl.Manifest;
-			return new ModuleInformation { Description = m.Description, IsSystemModule = m.IsSystemModule, ModuleName = m.ModuleName, Status = m.Status, Title = m.Title };
-		}
+		
 	}
 }

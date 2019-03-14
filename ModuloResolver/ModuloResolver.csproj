@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DllLoader\DllLoader.csproj" />
     <ProjectReference Include="..\ModuloContracts\ModuloContracts.csproj" />
+    <ProjectReference Include="..\Modulo\Modulo.csproj" />
   </ItemGroup>
 
 </Project>

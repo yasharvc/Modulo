@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ModuloContracts.Data;
+using ModuloContracts.Web;
 
 namespace ModuloContracts.Module.Interfaces
 {
 	public interface IUrlFilter
 	{
 		bool IsAllowed(HttpContext context, RequestData requestData);
-		string GetRedirectionPath();
-		string FilterControlName { get; }
+		PathParts GetRedirectionPath();
 	}
 }
