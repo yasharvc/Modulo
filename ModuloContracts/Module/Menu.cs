@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ModuloContracts.Module.Interfaces;
+using System.Collections.Generic;
 
 namespace ModuloContracts.Module
 {

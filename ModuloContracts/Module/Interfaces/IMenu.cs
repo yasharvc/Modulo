@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ModuloContracts.Module
+namespace ModuloContracts.Module.Interfaces
 {
 	public interface IMenu
 	{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModuloContracts.Module.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace ModuloContracts.Module
@@ -22,6 +23,8 @@ namespace ModuloContracts.Module
 		public virtual bool IsSystemModule => false;
 
 		public virtual Dictionary<string, IViewComponent> HomePageViewComponents => new Dictionary<string, IViewComponent>();
+
+		public virtual IUrlFilter UrlFilter => null;
 
 		public virtual void OnConfigure() { }
 	}

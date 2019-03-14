@@ -2,6 +2,7 @@
 using ModuloContracts;
 using ModuloContracts.Enums;
 using ModuloContracts.Module;
+using ModuloContracts.Module.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

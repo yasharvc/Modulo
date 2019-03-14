@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.Enums;
 using ModuloContracts.Module;
+using ModuloContracts.UrlFilter;
 using System;
 using System.Collections.Generic;
 
-namespace ModuloContracts.Module
+namespace ModuloContracts.Module.Interfaces
 {
 	public interface IManifest
 	{
@@ -18,6 +19,7 @@ namespace ModuloContracts.Module
 		IEnumerable<IMenu> Menus { get; }
 		bool IsSystemModule { get; }
 		void OnConfigure();
+		IUrlFilter UrlFilter { get; }
 		Dictionary<string, IViewComponent> HomePageViewComponents { get; }
 	}
 }

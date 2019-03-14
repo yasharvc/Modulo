@@ -1,4 +1,4 @@
-﻿namespace ModuloContracts.Module
+﻿namespace ModuloContracts.Module.Interfaces
 {
 	public interface ITest
 	{
