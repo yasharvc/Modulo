@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
+using ModuloContracts;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
+using ModuloContracts.Hub;
+using ModuloContracts.Hub.Interfaces;
 using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
 using ModuloContracts.Web.UserAgent;
@@ -24,10 +27,15 @@ using static Modulo.Controllers.ZestController;
 namespace Modulo
 {
 	
-	public class Program
+	public class Program:IInvocationHubProvider
 	{
 		public static WebApplicationData WebApplicationData { get; private set; } = new WebApplicationData();
 		public static Manager Manager => WebApplicationData.GetService<Manager>();
+
+		public event ManifestRequiredEventArgs OnManifestReuqired;
+		public event UserAgentEventArg OnUserAgentRequired;
+		public event WebApplicationDataEventArg OnWebApplicationDataRequired;
+
 		public static void Main(string[] args)
 		{
 			new Program().BuildWebHost(args).Run();
@@ -56,6 +64,7 @@ namespace Modulo
 						template: "{controller=Home}/{action=Index}/{id?}");
 				});
 				app.UseMvcWithDefaultRoute();
+				InvocationHub.InvokationHubProvider = this;
 				SamplePlugIns();
 				//var manager = app.ApplicationServices.GetRequiredService<Manager>();
 				//SetupEvents(manager);
@@ -100,6 +109,7 @@ namespace Modulo
 					if (url.IsAllowed(context, requestData))
 					{
 						await Manager.InvokeAction(context,requestData,mdl).ExecuteResultAsync(actionContext);
+						return;
 					}//Resolve Module and run
 					else
 					{

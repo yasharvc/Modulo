@@ -19,7 +19,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\" />
+    <Content Update="Modules\HomePageAuthenticator\Views\Security\Login.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Modules\HomePageAuthonticator\Views\Security\Login.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\Test\Pages\NewFolder\" />
   </ItemGroup>
 
 </Project>

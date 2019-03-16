@@ -14,7 +14,7 @@ namespace ModuloContracts.Hub
 		private const string GetUsersPath = "/Debug/GetUsers";
 		private static string BaseUri = "http://192.168.0.56/";
 		public static IInvocationHubProvider InvokationHubProvider { get; set; } = null;
-		private static bool IsInModuleDebugMode => InvokationHubProvider == null;
+		public static bool IsInModuleDebugMode => InvokationHubProvider == null;
 
 		public static string GetConnectionString()
 		{

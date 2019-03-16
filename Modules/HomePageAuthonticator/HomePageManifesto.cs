@@ -31,7 +31,7 @@ namespace HomePageAuthonticator
 
 		private bool CheckUserPermission(HttpContext context)
 		{
-			return false;
+			return context.Request.Cookies["UserID"] != null;
 		}
 
 		private bool IsPartsEligable(PathParts parts)

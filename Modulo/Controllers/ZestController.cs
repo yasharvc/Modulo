@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Modulo.Controllers
@@ -20,8 +21,14 @@ namespace Modulo.Controllers
 			//var res = invoker.InvokeMethod<List<Data2>>(obj, "GetData", new List<Type>(), new Dictionary<string, object>{
 			//	{ "da", d.ToJson() } ,{"add", 15 }
 			//});
-			//ViewBag.Widgets = Program.GetManifest("testmodule").HomePageViewComponents.Keys.ToList();
-			return View();
+			Dictionary<string, List<string>> Widgets = new Dictionary<string, List<string>>();
+			foreach(var manifest in Program.Manager.Moduels.Values)
+			{
+				if (!Widgets.ContainsKey(manifest.Manifest.ModuleName))
+					Widgets[manifest.Manifest.ModuleName] = new List<string>();
+				Widgets[manifest.Manifest.ModuleName].AddRange(manifest.Manifest.HomePageViewComponents.Keys);
+			}
+			return View(Widgets);
 		}
 		public class Data2
 		{

@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ModuloContracts.MVC;
 
 namespace HomePageAuthonticator.Controllers
 {
-	public class SecurityController:Controller
+	public class SecurityController : UIBaseController
 	{
-		public IActionResult Login()
+		public IActionResult Login() => View();
+
+		[HttpPost]
+		public IActionResult Login(string username,string password)
 		{
-			return Content("Login page!!!");
+			HttpContext.Response.Cookies.Append("UserID", username);
+			return Redirect("/Zest/Index");
 		}
 	}
 }

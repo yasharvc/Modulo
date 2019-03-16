@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.Data;
 using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
+using ModuloContracts.MVC;
 using ModuloContracts.Web;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +31,20 @@ namespace ModuloManager
 		{
 			Loader loader = new Loader(module.PathToDll);
 			var invoker = new Invoker(loader);
-			var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
-			var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
-			return actionResult;
+			var obj = invoker.CreateInstance<BaseController>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
+			obj.ModuleName = module.Manifest.ModuleName;
+			obj.HttpContext = context;
+			if (requestData.Method == Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post)
+			{
+				var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, new List<System.Type> {typeof(HttpPostAttribute)}
+				, requestData.GetRequestParametersDictionary());
+				return actionResult;
+			}
+			else
+			{
+				var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
+				return actionResult;
+			}
 		}
 	}
 }
