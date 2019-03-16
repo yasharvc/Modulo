@@ -98,7 +98,9 @@ namespace Modulo
 				{
 					var url = mdl.Manifest.UrlFilter;
 					if (url.IsAllowed(context, requestData))
-						;//Resolve Module and run
+					{
+						await Manager.InvokeAction(context,requestData,mdl).ExecuteResultAsync(actionContext);
+					}//Resolve Module and run
 					else
 					{
 						await Task.Run(() =>
@@ -109,15 +111,6 @@ namespace Modulo
 						});
 						return;
 					}
-				}
-				//if(ctrlToDll.ContainsKey(requestData.PathParts.ModuleName.ToLower()))
-				{
-					//var path = ctrlToDll[requestData.PathParts.ModuleName.ToLower()];
-					//Loader loader = new Loader(path);
-					//var invoker = new Invoker(loader);
-					//var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
-					//var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
-					//return actionResult.ExecuteResultAsync(actionContext);
 				}
 				if (requestData.Method == Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post)
 				{
@@ -140,6 +133,7 @@ namespace Modulo
 				await context.Response.WriteAsync($"Illegal method name: {httpMethodNotFoundException.Message} ->{requestData.PathParts.ToString()}");
 			}
 		}
+
 		private ActionDescriptor getActionDescriptor(HttpContext context)
 		{
 			return new ActionDescriptor();

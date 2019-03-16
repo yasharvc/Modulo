@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DllLoader;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.Data;
 using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
@@ -21,10 +23,16 @@ namespace ModuloManager
 			}
 		}
 
-		public Module GetUrlFilterByPathParts(HttpContext context,PathParts pathParts)
-		{
-			return Moduels.Select(m => m.Value).FirstOrDefault(k => k.Manifest.UrlFilter != null && k.Manifest.UrlFilter.IsAllowed(context, new RequestData { PathParts = pathParts }));
-		}
+		public Module GetUrlFilterByPathParts(HttpContext context, PathParts pathParts) => Moduels.Select(m => m.Value).FirstOrDefault(k => k.Manifest.UrlFilter != null && k.Manifest.UrlFilter.IsAllowed(context, new RequestData { PathParts = pathParts }));
 		public Module GetUrlFilterByRequestData(HttpContext context, RequestData requestData) => Moduels.Select(m => m.Value).FirstOrDefault(m => m.Manifest.UrlFilter != null);
+
+		public IActionResult InvokeAction(HttpContext context,RequestData requestData,Module module)
+		{
+			Loader loader = new Loader(module.PathToDll);
+			var invoker = new Invoker(loader);
+			var obj = invoker.CreateInstance<Controller>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
+			var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
+			return actionResult;
+		}
 	}
 }

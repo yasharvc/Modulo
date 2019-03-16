@@ -19,9 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Modules\Test\Pages\Shared\Components\KPI\KPI2.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
+    <Folder Include="Modules\" />
   </ItemGroup>
 
 </Project>
