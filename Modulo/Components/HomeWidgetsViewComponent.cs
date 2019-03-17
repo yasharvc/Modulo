@@ -10,7 +10,7 @@ namespace Modulo.Components
 	{
 		public async Task<IViewComponentResult> InvokeAsync(string packageName, string viewComponentName)
 		{
-			IManifest manifest = Program.Manager.Moduels[packageName].Manifest;
+			IManifest manifest = Program.Manager.Modules[packageName].Manifest;
 			var cmp = manifest.HomePageViewComponents[viewComponentName];
 			return await cmp.InvokeAsync();
 		}

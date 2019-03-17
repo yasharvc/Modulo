@@ -22,7 +22,7 @@ namespace Modulo.Controllers
 			//	{ "da", d.ToJson() } ,{"add", 15 }
 			//});
 			Dictionary<string, List<string>> Widgets = new Dictionary<string, List<string>>();
-			foreach(var manifest in Program.Manager.Moduels.Values)
+			foreach(var manifest in Program.Manager.Modules.Values)
 			{
 				if (!Widgets.ContainsKey(manifest.Manifest.ModuleName))
 					Widgets[manifest.Manifest.ModuleName] = new List<string>();

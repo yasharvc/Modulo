@@ -8,6 +8,7 @@ namespace ModuloContracts.MVC
 	public abstract class AreaController : BaseController {
 		public abstract bool IsPathInArea(PathParts pathParts);
 		public virtual bool IsUrlAllowed(PathParts pathParts) => true;
-		public abstract PathParts RedirectionPath { get; } 
+		public abstract PathParts RedirectionPath { get; }
+		public List<Module.Module> Modules { get; set; }
 	}
 }

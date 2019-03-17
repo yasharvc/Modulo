@@ -14,7 +14,7 @@ namespace ModuloManager
 {
 	public class Manager
 	{
-		public Dictionary<string, Module> Moduels { get; private set; } = new Dictionary<string, Module>();
+		public Dictionary<string, Module> Modules { get; private set; } = new Dictionary<string, Module>();
 		private Dictionary<string, List<AreaController>> AreaControllers = new Dictionary<string, List<AreaController>>();
 		private readonly string DEFAULT_CONTROLLER_NAME = "Home";
 		private readonly string DEFAULT_ACTION_NAME = "Index";
@@ -24,7 +24,7 @@ namespace ModuloManager
 			foreach (var Path in Paths)
 			{
 				var mdl = new ManifestResolver(Path);
-				Moduels[mdl.Module.Manifest.ModuleName] = mdl.Module;
+				Modules[mdl.Module.Manifest.ModuleName] = mdl.Module;
 				AddAreaControllers(Path, mdl);
 			}
 		}
@@ -50,7 +50,7 @@ namespace ModuloManager
 				foreach (var ctrl in item.Value)
 				{
 					if (ctrl.IsPathInArea(pathParts))
-						return Moduels[item.Key];
+						return Modules[item.Key];
 				}
 			}
 			throw new ModuleNotFoundException();
@@ -70,6 +70,7 @@ namespace ModuloManager
 			{
 				if (!(obj as AreaController).IsUrlAllowed(requestData.PathParts)) {
 					requestData.PathParts = (obj as AreaController).RedirectionPath;
+					(obj as AreaController).Modules = Modules.Values.Where(m => m.Manifest.ModuleName != module.Manifest.ModuleName).ToList();
 					return InvokeAction(context, requestData, module);
 				}
 			}
