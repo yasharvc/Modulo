@@ -18,7 +18,7 @@ namespace HomeArea
 			get
 			{
 				return new Dictionary<string, IViewComponent> {
-					{ "Home", new ModulesMenuViewComponent() }
+					{ "ModuleMenu", new ModulesMenuViewComponent() }
 				};
 			}
 		}

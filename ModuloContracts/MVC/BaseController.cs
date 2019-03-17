@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -30,6 +31,13 @@ namespace ModuloContracts.MVC
 			}
 			else
 				return base.View(name, model);
+		}
+
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			base.OnActionExecuting(context);
+			var arr = new Microsoft.Extensions.Primitives.StringValues(ModuleName ?? "Yashar");
+			context.HttpContext.Request.Headers.Add("ModuleName", arr);
 		}
 	}
 }

@@ -11,6 +11,7 @@ namespace HomeArea.Controllers
 
 		public IActionResult Index()
         {
+			var x = Request.Headers["ModuleName"];
             return View();
         }
 
