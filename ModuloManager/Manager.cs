@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Module;
-using ModuloContracts.Module.Interfaces;
 using ModuloContracts.MVC;
 using ModuloContracts.Web;
 using System;
