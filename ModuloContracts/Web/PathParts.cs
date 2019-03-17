@@ -12,6 +12,14 @@ namespace ModuloContracts.Web
 		public string Action { get; set; } = "";
 		public string QueryString { get; set; } = "";
 
+		public bool IsEmpty()
+		{
+			return string.IsNullOrEmpty(Area) &&
+				string.IsNullOrEmpty(ModuleName) &&
+				string.IsNullOrEmpty(Controller) &&
+				string.IsNullOrEmpty(Action);
+		}
+
 		public override bool Equals(object obj)
 		{
 			var actual = obj as PathParts;

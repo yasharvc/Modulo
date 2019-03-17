@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Modules\HomePageAuthenticator\Views\Security\Login.cshtml">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    <Content Update="Modules\HomeArea\Views\Home\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Modules\HomePageAuthonticator\Views\Security\Login.cshtml">

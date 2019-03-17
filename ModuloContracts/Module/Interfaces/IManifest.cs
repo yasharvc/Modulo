@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModuloContracts.MVC;
+using System;
 using System.Collections.Generic;
 
 namespace ModuloContracts.Module.Interfaces
@@ -15,7 +16,7 @@ namespace ModuloContracts.Module.Interfaces
 		IEnumerable<IMenu> Menus { get; }
 		bool IsSystemModule { get; }
 		void OnConfigure();
-		IUrlFilter UrlFilter { get; }
 		Dictionary<string, IViewComponent> HomePageViewComponents { get; }
+		IEnumerable<Type> AreaControllers { get; }
 	}
 }

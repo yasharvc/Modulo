@@ -1,6 +1,9 @@
 ﻿using ModuloContracts.Module.Interfaces;
+using ModuloContracts.MVC;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace ModuloContracts.Module
 {
@@ -23,8 +26,21 @@ namespace ModuloContracts.Module
 		public virtual bool IsSystemModule => false;
 
 		public virtual Dictionary<string, IViewComponent> HomePageViewComponents => new Dictionary<string, IViewComponent>();
-
-		public virtual IUrlFilter UrlFilter => null;
+		
+		public IEnumerable<Type> AreaControllers
+		{
+			get
+			{
+				Type t = GetType();
+				Assembly assembly = t.Assembly;
+				var types = assembly.GetTypes();
+				var res = new List<Type>();
+				foreach (var type in types)
+					if (type.BaseType == typeof(AreaController))
+						res.Add(type);
+				return res;
+			}
+		}
 
 		public virtual void OnConfigure() { }
 	}

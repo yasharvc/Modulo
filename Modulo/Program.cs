@@ -78,7 +78,7 @@ namespace Modulo
 		private void SamplePlugIns()
 		{
 			Manager.AddModuleByDllPath(@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\TestModule.dll"
-									 , @"G:\Modulo\Modules\HomePageAuthonticator\bin\Debug\netcoreapp2.1\HomePageAuthonticator.dll");
+									 , @"G:\Modulo\HomeArea\bin\Debug\netcoreapp2.1\HomeArea.dll");
 		}
 
 		private void AddPluginsRouting(IApplicationBuilder app)
@@ -102,30 +102,9 @@ namespace Modulo
 			{
 				PrepareRequstData(context, requestData);
 				context.Response.StatusCode = 200;
-				var mdl = Manager.GetUrlFilterByRequestData(context, requestData);
-				if(mdl != null)
-				{
-					var url = mdl.Manifest.UrlFilter;
-					if (url.IsAllowed(context, requestData))
-					{
-						await Manager.InvokeAction(context,requestData,mdl).ExecuteResultAsync(actionContext);
-						return;
-					}//Resolve Module and run
-					else
-					{
-						await Task.Run(() =>
-						{
-							var x = url.GetRedirectionPath();
-							x.ModuleName = mdl.Manifest.ModuleName;
-							context.Response.Redirect(x);
-						});
-						return;
-					}
-				}
-				if (requestData.Method == Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post)
-				{
-					await context.Response.WriteAsync(string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray()));
-				}
+				var mdl = Manager.GetModuleByPathParts(context, requestData.PathParts);
+				if (mdl != null)
+					await Manager.InvokeAction(context, requestData, mdl).ExecuteResultAsync(actionContext);
 				else
 				{
 					await context.Response.WriteAsync($"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>" +
@@ -134,6 +113,10 @@ namespace Modulo
 						$"{string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray())}");
 				}
 			}
+			catch (ModuleNotFoundException)
+			{
+				await context.Response.WriteAsync($"Module Not found!");
+			}
 			catch (UnknownUrlException unknownUrlException)
 			{
 				await context.Response.WriteAsync($"Unknown url: {unknownUrlException.Message}");
@@ -141,6 +124,10 @@ namespace Modulo
 			catch (HttpMethodNotFoundException httpMethodNotFoundException)
 			{
 				await context.Response.WriteAsync($"Illegal method name: {httpMethodNotFoundException.Message} ->{requestData.PathParts.ToString()}");
+			}
+			catch(ActionNotFoundException actionNotFoundException)
+			{
+				await context.Response.WriteAsync($"Action not found: {actionNotFoundException.Message}");
 			}
 		}
 

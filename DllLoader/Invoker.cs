@@ -12,13 +12,14 @@ namespace DllLoader
 	public class Invoker
 	{
 		private Loader Loader { get; set; }
+		public Invoker(string PathToDll) : this(new Loader(PathToDll)) { }
 		public Invoker(Loader loader)
 		{
 			Loader = loader;
 		}
 
 		public T CreateInstance<T>(string ClassFullName) where T : class => Loader.GetMainAssembly().CreateInstance(ClassFullName, true) as T;
-
+		public T CreateInstance<T>(Type type) where T : class => CreateInstance<T>(type.FullName);
 		public object CreateInstance(Type type) => Loader.GetMainAssembly().CreateInstance(type.FullName, true);
 
 		public T CreateInstanceByParentType<T>() where T : class
