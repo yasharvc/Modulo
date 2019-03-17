@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Index";
+﻿@using ModuloContracts.MVC
+@{
+	ViewData["Title"] = "Index";
 }
 
 <h2>Index</h2>
+@await Component.Component("HomeArea", "Home")

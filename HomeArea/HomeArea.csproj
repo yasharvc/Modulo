@@ -18,4 +18,16 @@
     <ProjectReference Include="..\ModuloContracts\ModuloContracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Modules\HomeArea\Pages\Shared\Components\KPI\KPI.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Modules\HomeArea\Views\Home\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Modules\HomeArea\Views\Security\Login.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>

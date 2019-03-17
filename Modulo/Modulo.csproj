@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Modules\Test\Pages\NewFolder\**" />
+    <Content Remove="Modules\Test\Pages\NewFolder\**" />
+    <EmbeddedResource Remove="Modules\Test\Pages\NewFolder\**" />
+    <None Remove="Modules\Test\Pages\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
@@ -19,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Modules\HomeArea\Pages\Shared\Components\KPI\KPI.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Modules\HomeArea\Views\Home\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -28,10 +38,6 @@
     <Content Update="Modules\HomePageAuthonticator\Views\Security\Login.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Modules\Test\Pages\NewFolder\" />
   </ItemGroup>
 
 </Project>

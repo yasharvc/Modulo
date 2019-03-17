@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Modulo.Components
 {
-	[ViewComponent(Name = "HomeWidgets")]
-	public class HomeWidgetsViewComponent : ViewComponent
+	[ViewComponent(Name = "Renderer")]
+	public class RendererViewComponent : ViewComponent
 	{
 		public async Task<IViewComponentResult> InvokeAsync(string moduleName, string viewComponentName)
 		{
