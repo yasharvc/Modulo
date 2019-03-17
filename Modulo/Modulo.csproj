@@ -22,6 +22,9 @@
     <Content Update="Modules\HomeArea\Views\Home\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Modules\HomeArea\Views\Security\Login.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Modules\HomePageAuthonticator\Views\Security\Login.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

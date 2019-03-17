@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.MVC;
 
 namespace HomeArea.Controllers
 {
-    public class SecurityController : UIBaseController
+	public class SecurityController : UIBaseController
     {
-        public IActionResult Login()
-        {
-            return Content("Please Login!!!");
-        }
-    }
+		public IActionResult Login() => View();
+
+		[HttpPost]
+		public IActionResult Login(string username, string password)
+		{
+			HttpContext.Response.Cookies.Append("UserID", username);
+			return Redirect("/Home/Index");
+		}
+	}
 }
