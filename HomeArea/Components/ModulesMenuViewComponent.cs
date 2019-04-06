@@ -13,7 +13,7 @@ namespace HomeArea.Components
 	{
 		public override async Task<IViewComponentResult> InvokeAsync()
 		{
-			return await Task.FromResult(GetView("KPI"));
+			return await Task.FromResult(GetView("KPI2","KPI"));
 		}
 	}
 }

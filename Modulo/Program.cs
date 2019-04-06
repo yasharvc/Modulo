@@ -58,7 +58,7 @@ namespace Modulo
 				AddPluginsRouting(app);
 				app.UseMvc(routes =>
 				{
-					routes.MapRoute("areaRoute", "{area:exists}/{controller=Manage}/{action=Index}/{id?}");
+					routes.MapRoute("areaRoute", "{area:exists}/{controller=Panel}/{action=Index}/{id?}");
 					routes.MapRoute(
 						name: "default",
 						template: "{controller=Home}/{action=Index}/{id?}");
