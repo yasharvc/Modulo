@@ -11,11 +11,12 @@ namespace ModuloContracts.MVC
 	{
 		public static async Task<IHtmlContent> Component(this IViewComponentHelper viewComponentHelper,HttpContext context,string viewComponentName)
 		{
-			HttpCon
+
+			//HttpCon
 			if (InvocationHub.IsInModuleDebugMode)
 				return await viewComponentHelper.InvokeAsync(viewComponentName);
 			else
-				return await viewComponentHelper.InvokeAsync("Renderer", new { context.Request.Headers["ModuleName"], viewComponentName });
+				return await viewComponentHelper.InvokeAsync("Renderer", new { moduleName = context.Request.Headers["ModuleName"], viewComponentName });
 		}
 	}
 }
