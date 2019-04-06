@@ -2,6 +2,7 @@
 using HomeArea.Components;
 using ModuloContracts;
 using ModuloContracts.Module;
+using ModuloContracts.MVC;
 
 namespace HomeArea
 {
@@ -13,11 +14,11 @@ namespace HomeArea
 
 		public override string Description => "Home area controller";
 
-		public override Dictionary<string, IViewComponent> HomePageViewComponents
+		public override Dictionary<string, BaseViewComponent> HomePageViewComponents
 		{
 			get
 			{
-				return new Dictionary<string, IViewComponent> {
+				return new Dictionary<string, BaseViewComponent> {
 					{ "ModuleMenu", new ModulesMenuViewComponent() }
 				};
 			}

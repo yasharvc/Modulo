@@ -66,6 +66,7 @@ namespace ModuloManager
 				throw new ActionNotFoundException(requestData.PathParts);
 			obj.ModuleName = module.Manifest.ModuleName;
 			obj.HttpContext = context;
+			obj.HttpContext.Request.Headers["ModuleName"] = new Microsoft.Extensions.Primitives.StringValues(module.Manifest.ModuleName);
 			if(obj is AreaController)
 			{
 				if (!(obj as AreaController).IsUrlAllowed(requestData.PathParts)) {

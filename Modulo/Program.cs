@@ -77,8 +77,8 @@ namespace Modulo
 
 		private void SamplePlugIns()
 		{
-			Manager.AddModuleByDllPath(@"G:\Modulo\TestModule\bin\Debug\netcoreapp2.1\TestModule.dll"
-									 , @"G:\Modulo\HomeArea\bin\Debug\netcoreapp2.1\HomeArea.dll");
+			Manager.AddModuleByDllPath(@"G:\Projects\Modulo\TestModule\bin\Debug\netcoreapp2.1\TestModule.dll"
+									 , @"G:\Projects\Modulo\HomeArea\bin\Debug\netcoreapp2.1\HomeArea.dll");
 		}
 
 		private void AddPluginsRouting(IApplicationBuilder app)

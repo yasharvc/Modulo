@@ -59,7 +59,7 @@ namespace DllLoader
 			int i = 0;
 			foreach (var param in parameters)
 				orderedParams[i++] = convertedParameters[param.Name];
-			var resultObject = method.Invoke(obj, orderedParams);
+			var resultObject = orderedParams.Length > 0 ? method.Invoke(obj, orderedParams) : method.Invoke(obj,new object[] { });
 			if (!(resultObject is T res))
 				res = Extenstions.FromObject<T>(resultObject);
 			return res;

@@ -3,6 +3,7 @@ using ModuloContracts;
 using ModuloContracts.Enums;
 using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
+using ModuloContracts.MVC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,10 +37,10 @@ namespace TestModule
 			}
 		}
 
-		public override Dictionary<string, IViewComponent> HomePageViewComponents {
+		public override Dictionary<string, BaseViewComponent> HomePageViewComponents {
 			get
 			{
-				Dictionary<string, IViewComponent> components = new Dictionary<string, IViewComponent>();
+				var components = new Dictionary<string, BaseViewComponent>();
 				components["Simple"] = new SimpleViewComponent();
 				components["Simple2"] = new Simple2ViewComponent();
 				return components;

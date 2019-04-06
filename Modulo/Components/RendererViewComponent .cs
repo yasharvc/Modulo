@@ -12,6 +12,8 @@ namespace Modulo.Components
 		{
 			IManifest manifest = Program.Manager.Modules[moduleName].Manifest;
 			var cmp = manifest.HomePageViewComponents[viewComponentName];
+			HttpContext.Request.Headers["ModuleName"] = new Microsoft.Extensions.Primitives.StringValues(moduleName);
+			cmp.HttpContext = HttpContext;
 			return await cmp.InvokeAsync();
 		}
 	}

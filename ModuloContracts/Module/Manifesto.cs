@@ -25,7 +25,7 @@ namespace ModuloContracts.Module
 
 		public virtual bool IsSystemModule => false;
 
-		public virtual Dictionary<string, IViewComponent> HomePageViewComponents => new Dictionary<string, IViewComponent>();
+		public virtual Dictionary<string, BaseViewComponent> HomePageViewComponents => new Dictionary<string, BaseViewComponent>();
 		
 		public IEnumerable<Type> AreaControllers
 		{

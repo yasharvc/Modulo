@@ -16,7 +16,7 @@ namespace ModuloContracts.Module.Interfaces
 		IEnumerable<IMenu> Menus { get; }
 		bool IsSystemModule { get; }
 		void OnConfigure();
-		Dictionary<string, IViewComponent> HomePageViewComponents { get; }
+		Dictionary<string, BaseViewComponent> HomePageViewComponents { get; }
 		IEnumerable<Type> AreaControllers { get; }
 	}
 }

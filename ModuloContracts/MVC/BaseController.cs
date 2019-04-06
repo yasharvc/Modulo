@@ -10,6 +10,8 @@ namespace ModuloContracts.MVC
 	{
 		public string ModuleName { get; set; }
 		public new HttpContext HttpContext { get; set; }
+		public new HttpRequest Request => HttpContext.Request;
+		public new HttpResponse Response => HttpContext.Response;
 		public string Name { get { return GetType().Name.Replace("Controller", "", StringComparison.OrdinalIgnoreCase); } }
 		private string ViewPath { get; set; }
 

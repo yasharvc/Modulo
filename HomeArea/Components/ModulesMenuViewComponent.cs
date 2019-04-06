@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ModuloContracts;
+using ModuloContracts.MVC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 namespace HomeArea.Components
 {
 	[ViewComponent(Name = "ModuleMenu")]
-	public class ModulesMenuViewComponent : ViewComponent, IViewComponent
+	public class ModulesMenuViewComponent : BaseViewComponent
 	{
-		public async Task<IViewComponentResult> InvokeAsync()
+		public override async Task<IViewComponentResult> InvokeAsync()
 		{
-			return await Task.FromResult((IViewComponentResult)View("~/Modules/HomeArea/Pages/Shared/Components/KPI/KPI.cshtml"));
+			return await Task.FromResult(GetView("KPI"));
 		}
 	}
 }
