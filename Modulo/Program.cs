@@ -10,8 +10,6 @@ using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Hub;
 using ModuloContracts.Hub.Interfaces;
-using ModuloContracts.Module;
-using ModuloContracts.Module.Interfaces;
 using ModuloContracts.Web.UserAgent;
 using ModuloManager;
 using System;
@@ -22,11 +20,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using WebUtility;
-using static Modulo.Controllers.ZestController;
 
 namespace Modulo
 {
-	
+
 	public class Program:IInvocationHubProvider
 	{
 		public static WebApplicationData WebApplicationData { get; private set; } = new WebApplicationData();
