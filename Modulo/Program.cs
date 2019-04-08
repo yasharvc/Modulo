@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
+using Modulo.Classes;
 using ModuloContracts;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.SystemExceptions;
@@ -56,6 +57,7 @@ namespace Modulo
 					app.UseExceptionHandler(GetErrorPage());
 				app.UseStaticFiles();
 				AddPluginsRouting(app);
+				AddAuthenticationLayer(app);
 				app.UseMvc(routes =>
 				{
 					routes.MapRoute("areaRoute", "{area:exists}/{controller=Panel}/{action=Index}/{id?}");
@@ -66,13 +68,16 @@ namespace Modulo
 				app.UseMvcWithDefaultRoute();
 				InvocationHub.InvokationHubProvider = this;
 				SamplePlugIns();
-				//var manager = app.ApplicationServices.GetRequiredService<Manager>();
 				//SetupEvents(manager);
-				//AddAuthenticationLayer(app);
 
 				//SetupSystemProvider(manager);
 				//SetupInvokationHub(manager, app.ApplicationServices);
 			}).Build();
+		}
+
+		private void AddAuthenticationLayer(IApplicationBuilder app)
+		{
+			new AuthenticationLayer(app);
 		}
 
 		private void SamplePlugIns()

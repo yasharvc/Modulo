@@ -1,0 +1,65 @@
+﻿@model List<ModuloContracts.Module.Module>
+@using ModuloContracts.Enums
+@{
+	ViewData["Title"] = "وضعیت ماژولها";
+	Layout = "_Layout";
+}
+<script>
+	function getChecked() {
+		var radio = $('input[type=radio][name=options]:checked');
+		$.post({
+			url: 'ChangeModuleStatus',
+			data: { moduleName: radio.data('module'), action: radio.data('action') },
+			success: function (data) {
+				if (data.result)
+					alert("با موفقیت تغییر یافت");
+				else
+					alert(data.message);
+			}
+		});
+	}
+</script>
+<div class="table-responsive table--no-card m-b-30">
+	<table class="table table-borderless table-striped table-earning">
+		<thead>
+			<tr>
+				<th class="text-center">نام ماژول</th>
+				<th class="text-center">توضیح</th>
+				<th class="text-center">وضعیت</th>
+				<th class="text-center">ابزارها</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var module in Model)
+			{
+				<tr>
+					<td class="text-center">@module.Manifest.Title</td>
+					<td class="text-center">@module.Manifest.Description</td>
+					<td class="text-center">
+						<div class="btn-group btn-group-toggle" data-toggle="buttons">
+							<label class="btn btn-outline-success @(module.Status == ModuleStatus.Enable ? "active" : "")" @(module.Manifest.IsSystemModule ? "disabled" : "")>
+								<input type="radio" name="options" data-module="@module.Manifest.ModuleName" data-action="0" autocomplete="off" onchange="getChecked()" @(module.Status == ModuleStatus.Enable ? "checked" : "")> فعال
+							</label>
+							<label class="btn btn-outline-danger @(module.Status == ModuleStatus.Disable ? "active" : "")" @(module.Manifest.IsSystemModule ? "disabled" : "")>
+								<input type="radio" name="options" data-module="@module.Manifest.ModuleName" data-action="1" autocomplete="off" onchange="getChecked()" @(module.Status == ModuleStatus.Enable ? "checked" : "")> غیرفعال
+							</label>
+							<label class="btn btn-outline-warning @(module.Status == ModuleStatus.Paused ? "active" : "")" @(module.Manifest.IsSystemModule ? "disabled" : "")>
+								<input type="radio" name="options" data-module="@module.Manifest.ModuleName" data-action="2" autocomplete="off" onchange="getChecked()" @(module.Status == ModuleStatus.Enable ? "checked" : "")> معلق
+							</label>
+						</div>
+					</td>
+					<td class="text-center">
+						<div class="btn-group btn-group-toggle" data-toggle="buttons">
+							<button class="btn btn-primary" type="button" onclick="getCode('@module.Manifest.ModuleName')"><i class="fa fa-file-code"></i></button>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+<script>
+	function getCode(pname) {
+		window.open('/Management/Manage/GetCode?moduleName=' + pname, '_blank');
+	}
+</script>
