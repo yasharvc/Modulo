@@ -1,12 +1,14 @@
 ﻿using DllLoader;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ModuleContracts.Module.Service;
 using ModuloContracts.Data;
 using ModuloContracts.Enums;
 using ModuloContracts.Exceptions.Module;
 using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
+using ModuloContracts.Module.Meta;
 using ModuloContracts.MVC;
 using ModuloContracts.Web;
 using Newtonsoft.Json;
@@ -202,7 +204,34 @@ namespace ModuloManager
 		{
 			throw new NotImplementedException();
 		}
+		public void PasueModule(params string[] ModuleNames)
+		{
+			foreach (var ModuleName in ModuleNames)
+			{
+				try
+				{
+					var module = Modules[ModuleName];
+					if (module.Status == ModuleStatus.Paused)
+						return;
+					Dependency dependency = new Dependency
+					{
+						ModuleName = ModuleName,
+						AcceptableMajor = module.Manifest.Version.Major
+					};
+					var x = Modules.Values.Where(m => m.Manifest.Dependencies.Contains(dependency));
+					foreach (var y in x)
+						y.OnDependencyPause(ModuleName);
 
+					module.SetStatus(ModuleStatus.Paused);
+					File.WriteAllText(Path.Combine(GetModuleFolder(module), "status"), "paused");
+				}
+				catch
+				{
+					throw new ModuleNotFoundException();
+				}
+
+			}
+		}
 		private void Upgrade(ModuloContracts.Module.Module module)
 		{
 			var currentModule = Modules[module.Manifest.ModuleName];
@@ -270,7 +299,7 @@ namespace ModuloManager
 				}
 			}
 		}
-		public Module GetModuleByPathParts(HttpContext context,PathParts pathParts)
+		public ModuloContracts.Module.Module GetModuleByPathParts(HttpContext context,PathParts pathParts)
 		{
 			foreach (var item in AreaControllers)
 			{
@@ -283,7 +312,7 @@ namespace ModuloManager
 			throw new ModuleNotFoundException();
 		}
 
-		public IActionResult InvokeAction(HttpContext context,RequestData requestData,Module module)
+		public IActionResult InvokeAction(HttpContext context,RequestData requestData, ModuloContracts.Module.Module module)
 		{
 			ClearPathParts(requestData.PathParts);
 			Loader loader = new Loader(module.PathToDll);
@@ -324,11 +353,9 @@ namespace ModuloManager
 			}
 		}
 
-		public void Upgrade()
+		private IEnumerable<Type> GetServieOrModels(Assembly asm)
 		{
-			throw new Exception();
-			var moudleName = "";
-			AreaControllers.Remove(moudleName);
+			return asm.GetTypes().Where(m => m.GetInterface(nameof(IService)) != null || m.GetCustomAttribute(typeof(ServiceModel)) != null);
 		}
 	}
 }

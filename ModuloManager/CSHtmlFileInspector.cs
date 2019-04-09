@@ -1,4 +1,6 @@
-﻿namespace ModuloManager
+﻿using System.Text.RegularExpressions;
+
+namespace ModuloManager
 {
 	internal class CSHtmlFileInspector
 	{

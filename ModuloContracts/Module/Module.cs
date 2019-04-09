@@ -1,5 +1,6 @@
 ﻿using ModuloContracts.Enums;
 using ModuloContracts.Module.Interfaces;
+using ModuloContracts.Module.Meta;
 using System;
 using System.Reflection;
 
@@ -11,6 +12,7 @@ namespace ModuloContracts.Module
 		public IManifest Manifest { get; private set; }
 		public ModuleStatus Status { get; private set; } = ModuleStatus.Disable;
 		Assembly Assembly { get; set; }
+		ServiceMeta ServiceMeta { get; set; }
 		public Module(Assembly assembly)
 		{
 			Assembly = assembly;
@@ -21,6 +23,9 @@ namespace ModuloContracts.Module
 			Manifest = manifest;
 			Status = status;
 		}
+		public virtual void OnDependencyPause(string Dependency) { }
+
+		public virtual void OnDependencyResume(string Dependency) { }
 		public virtual void OnConfigure() { Manifest.OnConfigure(); }
 		public static implicit operator ModuleInformation(Module mdl)
 		{
@@ -36,5 +41,7 @@ namespace ModuloContracts.Module
 		{
 			Manifest = manifest;
 		}
+
+		public void SetServiceMeta(ServiceMeta meta) => ServiceMeta = meta;
 	}
 }
