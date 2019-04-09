@@ -2,13 +2,16 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.Data;
+using ModuloContracts.Exceptions.Module;
 using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Module;
+using ModuloContracts.Module.Interfaces;
 using ModuloContracts.MVC;
 using ModuloContracts.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ModuloManager
 {
@@ -28,6 +31,79 @@ namespace ModuloManager
 				AddAreaControllers(Path, mdl);
 			}
 		}
+
+		public void UploadZip(byte[] bytes, bool Upgrade = true)
+		{
+			var zipHandler = new ModuleZipHandler(bytes);
+			try
+			{
+				var inspector = new ModuleFolderInspector(zipHandler.GetFullTempFolderPath());
+				var module = GetModuleFromBytes(inspector.GetDll());
+				if (Modules.ContainsKey(module.Manifest.ModuleName))
+				{
+					if (Upgrade)
+						this.Upgrade(module);
+					else
+						Downgrade(module);
+				}
+				HistoryModule(zipHandler, module);
+				ClearModuleFolder(module);
+				zipHandler.CutToFolder(GetModuleFolder(module));
+				Resolve(ReadModuleBytesFromModulesFolder(module));
+				module.OnConfigure();
+			}
+			finally
+			{
+				zipHandler.Dispose();
+			}
+		}
+
+		private Module GetModuleFromBytes(byte[] Dllbytes)
+		{
+			var asm = LoadAssemblyFromBytes(Dllbytes);
+			var manifest = GetIManifest(asm);
+			PreInstallchecks(manifest);
+			var module = new ModuleContracts.Module(asm);
+			module.SetManifest(manifest);
+			module.SetStatus(ModuleStatus.Disable);
+
+			ExtractServices(asm, manifest, module);
+
+			return module;
+		}
+
+		private Assembly LoadAssemblyFromBytes(byte[] bytes)
+		{
+			return Assembly.Load(bytes);
+		}
+		private void PreInstallchecks(IManifest module)
+		{
+			DependencyCheck(module.Dependencies);
+			TestTests(module.Tests);
+		}
+		private IManifest GetIManifest(Assembly asm)
+		{
+			Type res = asm.GetTypes().Where(m => m.GetInterface(nameof(IManifest)) != null).FirstOrDefault();
+			if (res == null)
+				throw new IModuleNotFoundException();
+			return asm.CreateInstance(res.FullName) as IManifest;
+		}
+		private void TestTests(IEnumerable<ITest> Tests)
+		{
+			var erroList = new List<ITest>();
+			foreach (var test in Tests)
+				if (!test.Test())
+					erroList.Add(test);
+			if (erroList.Count > 0)
+				throw new TestsNotPassedException(erroList);
+		}
+		private void DependencyCheck(IEnumerable<Dependency> dependencies)
+		{
+			foreach (var dependency in dependencies)
+				if (!IsDependencyExist(dependency))
+					throw new DependencyNotFoundException(dependency.ModuleName);
+		}
+		private bool IsDependencyExist(Dependency dependency) => Modules.Values.Select(m => m.Manifest.ModuleName == dependency.ModuleName && m.Manifest.Version.Major == dependency.AcceptableMajor).Any();
 
 		private void AddAreaControllers(string Path, ManifestResolver mdl)
 		{
