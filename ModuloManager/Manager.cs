@@ -2,25 +2,33 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.Data;
+using ModuloContracts.Enums;
 using ModuloContracts.Exceptions.Module;
 using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
 using ModuloContracts.MVC;
 using ModuloContracts.Web;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace ModuloManager
 {
 	public class Manager
 	{
-		public Dictionary<string, Module> Modules { get; private set; } = new Dictionary<string, Module>();
+		public static string ModulesRootPath => "Modules";
+		private readonly List<string> SpecialFolders = new List<string> { "temp" };
+		public Dictionary<string, ModuloContracts.Module.Module> Modules { get; private set; } = new Dictionary<string, ModuloContracts.Module.Module>();
 		private Dictionary<string, List<AreaController>> AreaControllers = new Dictionary<string, List<AreaController>>();
 		private readonly string DEFAULT_CONTROLLER_NAME = "Home";
 		private readonly string DEFAULT_ACTION_NAME = "Index";
+
+		private List<ModuleIndexData> DependencyIndex { get; set; } = new List<ModuleIndexData>();
 
 		public void AddModuleByDllPath(params string[] Paths)
 		{
@@ -57,13 +65,95 @@ namespace ModuloManager
 				zipHandler.Dispose();
 			}
 		}
+		private byte[] ReadModuleBytesFromModulesFolder(ModuloContracts.Module.Module module) => File.ReadAllBytes(Directory.GetFiles(GetModuleFolder(module), "*.dll").First());
+		private bool ValidateVersion(string version)
+		{
+			var match = Regex.Match(version, @"^(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)\.(?<revision>\d+)$");
+			if (match.Success)
+			{
+				int component;
+				if (int.TryParse(match.Groups["major"].Value, out component) &&
+				  int.TryParse(match.Groups["minor"].Value, out component) &&
+				  int.TryParse(match.Groups["build"].Value, out component) &&
+				  int.TryParse(match.Groups["revision"].Value, out component))
+				{
+					return true;
+				}
+			}
 
-		private Module GetModuleFromBytes(byte[] Dllbytes)
+			return false;
+		}
+
+		private void ClearModuleFolder(ModuloContracts.Module.Module module)
+		{
+			var folder = GetModuleFolder(module);
+			var files = Directory.GetFiles(folder).Where(m => !m.EndsWith("status"));
+			var dirs = Directory.GetDirectories(folder).Where(dir => !ValidateVersion(dir.Substring(dir.LastIndexOf("\\") + 1)));
+			foreach (var file in files)
+				File.Delete(file);
+			foreach (var dir in dirs)
+				Directory.Delete(dir, true);
+		}
+
+		public void Resolve(byte[] Dllbytes)
+		{
+			var module = GetModuleFromBytes(Dllbytes);
+			module.SetPathToDll(Directory.GetFiles(GetModuleFolder(module), "*.dll").Single());
+			AddModule(module);
+		}
+		private ModuloContracts.Module.Module InspectFolder(string folder)
+		{
+			var inspector = new ModuleFolderInspector(folder);
+			var module = GetModuleFromBytes(inspector.GetDll());
+			module.SetStatus(ModuleStatus.Enable);
+			module.SetPathToDll(inspector.GetDllPath());
+			if (File.Exists(Path.Combine(folder, "status")))
+			{
+				var statusStr = File.ReadAllText(Path.Combine(folder, "status"));
+				if (statusStr.Contains("disable", StringComparison.OrdinalIgnoreCase))
+					module.SetStatus(ModuleStatus.Disable);
+				else if (statusStr.Contains("paused", StringComparison.OrdinalIgnoreCase))
+					module.SetStatus(ModuleStatus.Paused);
+			}
+			return module;
+		}
+		public void AddModule(ModuloContracts.Module.Module module)
+		{
+			UpdateDependencyIndex(module);
+			Modules[module.Manifest.ModuleName] = module;
+		}
+		private void UpdateDependencyIndex(ModuloContracts.Module.Module module)
+		{
+			var dependedModules = Modules.Where(m => m.Value.Manifest.Dependencies.Any(k => k.ModuleName == module.Manifest.ModuleName));
+			if (DependencyIndex.Any(m => m.ModuleName == module.Manifest.ModuleName))
+			{
+				DependencyIndex.Single(m => m.ModuleName == module.Manifest.ModuleName).Dep = module.Manifest.Dependencies.Select(dp => dp.ModuleName).ToList();
+				//Modules.Single(m => m.Value.Manifest.ModuleName == module.Manifest.ModuleName).Value.Manifest.Dependencies = module.Manifest.Dependencies;
+				try
+				{
+					var oldModule = Modules.Single(m => m.Value.Manifest.ModuleName == module.Manifest.ModuleName);
+					var dependOnModules = Modules.Where(m => oldModule.Value.Manifest.Dependencies.Select(d => d.ModuleName).Contains(m.Value.Manifest.ModuleName));
+					var targets = DependencyIndex.Where(dp => dependOnModules.Any(m => m.Value.Manifest.ModuleName == dp.ModuleName)).ToList();
+					foreach (var target in targets)
+						DependencyIndex.Single(d => d.ModuleName == target.ModuleName).Cnt--;
+				}
+				catch { }
+			}
+			else
+			{
+				var temp = new ModuleIndexData { Dep = module.Manifest.Dependencies.Select(m => m.ModuleName).ToList(), Cnt = 0, ModuleName = module.Manifest.ModuleName };
+				DependencyIndex.Add(temp);
+			}
+			foreach (var dependency in module.Manifest.Dependencies)
+				DependencyIndex.Single(m => m.ModuleName == dependency.ModuleName).Cnt++;
+			File.WriteAllText(GetDiFilePath(), JsonConvert.SerializeObject(DependencyIndex));
+		}
+		private ModuloContracts.Module.Module GetModuleFromBytes(byte[] Dllbytes)
 		{
 			var asm = LoadAssemblyFromBytes(Dllbytes);
 			var manifest = GetIManifest(asm);
 			PreInstallchecks(manifest);
-			var module = new ModuleContracts.Module(asm);
+			var module = new ModuloContracts.Module.Module(asm);
 			module.SetManifest(manifest);
 			module.SetStatus(ModuleStatus.Disable);
 
@@ -71,7 +161,68 @@ namespace ModuloManager
 
 			return module;
 		}
+		private void ExtractServices(Assembly assembly, IManifest manifest, ModuloContracts.Module.Module module)
+		{
+			ServiceMeta serviceMeta = new ServiceMeta(assembly, manifest);
 
+			var types = GetServieOrModels(assembly);
+			foreach (var type in types)
+			{
+				if (type.IsPublic)
+				{
+					if (type.GetCustomAttribute(typeof(ServiceModel)) is ServiceModel)
+					{
+						ModelMeta model = new ModelMeta(type);
+						serviceMeta.Models.Add(model);
+					}
+					else
+					{
+						foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+							if (method.GetCustomAttribute(typeof(ServiceFunction)) is ServiceFunction functionAttr)
+								serviceMeta.Functions.Add(new FunctionMeta(method, functionAttr, Activator.CreateInstance(type) as IService));
+					}
+				}
+			}
+			module.SetServiceMeta(serviceMeta);
+		}
+		private string GetDiFilePath()
+		{
+			return Path.Combine(ModulesRootPath, "di.txt");
+		}
+		private void HistoryModule(ModuleZipHandler zipHandler, ModuloContracts.Module.Module module)
+		{
+			zipHandler.CopyToFolder(Path.Combine(GetModuleFolder(module), module.Manifest.Version.ToString()));
+		}
+		private string GetModuleFolder(ModuloContracts.Module.Module module)
+		{
+			return Path.Combine(ModulesRootPath, module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
+		}
+		#region Upgrade & Downgrade
+		private void Downgrade(ModuloContracts.Module.Module module)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void Upgrade(ModuloContracts.Module.Module module)
+		{
+			var currentModule = Modules[module.Manifest.ModuleName];
+			if (currentModule.Manifest.Version > module.Manifest.Version)
+				throw new DowngradeException();
+			PasueModule(module.Manifest.ModuleName);
+			if (currentModule.Manifest.Version.Major < module.Manifest.Version.Major)
+				InformDependendentModules(module.Manifest.ModuleName);
+		}
+		private void InformDependendentModules(string moduleName)
+		{
+			foreach (var module in Modules.Values)
+			{
+				if (module.Manifest.ModuleName != moduleName)
+				{
+					module.OnDependencyPause(moduleName);
+				}
+			}
+		}
+		#endregion
 		private Assembly LoadAssemblyFromBytes(byte[] bytes)
 		{
 			return Assembly.Load(bytes);
