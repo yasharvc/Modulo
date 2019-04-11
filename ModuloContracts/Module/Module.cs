@@ -12,7 +12,8 @@ namespace ModuloContracts.Module
 		public IManifest Manifest { get; private set; }
 		public ModuleStatus Status { get; private set; } = ModuleStatus.Disable;
 		Assembly Assembly { get; set; }
-		ServiceMeta ServiceMeta { get; set; }
+		public string ServiceCode => Manifest.ServiceMeta.ToString();
+		public ServiceMeta ServiceMeta => Manifest.ServiceMeta;
 		public Module(Assembly assembly)
 		{
 			Assembly = assembly;

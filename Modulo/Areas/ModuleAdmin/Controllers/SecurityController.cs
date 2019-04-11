@@ -25,7 +25,7 @@ namespace Modulo.Areas.ModuleAdmin.Controllers
 			if (!string.IsNullOrEmpty(token))
 			{
 				Response.Cookies.Append(AuthenticationLayer.UserTokenKey, token);
-				return Redirect(nameof(ModuleAdmin));
+				return Redirect($"/{nameof(ModuleAdmin)}");
 			}
 			return RedirectToAction(nameof(Login), new { error = "نام کاربری و یا رمز عبور اشتباه است" });
 		}

@@ -1,4 +1,5 @@
-﻿using ModuloContracts.MVC;
+﻿using ModuloContracts.Module.Meta;
+using ModuloContracts.MVC;
 using System;
 using System.Collections.Generic;
 
@@ -18,5 +19,6 @@ namespace ModuloContracts.Module.Interfaces
 		void OnConfigure();
 		Dictionary<string, BaseViewComponent> HomePageViewComponents { get; }
 		IEnumerable<Type> AreaControllers { get; }
+		ServiceMeta ServiceMeta { get; set; }
 	}
 }

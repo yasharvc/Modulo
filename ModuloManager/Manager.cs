@@ -357,5 +357,48 @@ namespace ModuloManager
 		{
 			return asm.GetTypes().Where(m => m.GetInterface(nameof(IService)) != null || m.GetCustomAttribute(typeof(ServiceModel)) != null);
 		}
+
+		
+		public void EnableModule(params string[] ModuleNames)
+		{
+			foreach (var ModuleName in ModuleNames)
+			{
+				try
+				{
+					var module = Modules[ModuleName];
+					if (module.Status == ModuleStatus.Enable)
+						return;
+					if (module.Status == ModuleStatus.Paused)
+						throw new ModulePausedException();
+					module.SetStatus(ModuleStatus.Enable);
+					File.Delete(Path.Combine(GetModuleFolder(module), "status"));
+				}
+				catch
+				{
+					throw new ModuleNotFoundException();
+				}
+			}
+		}
+		public void DisableModule(params string[] ModuleNames)
+		{
+			foreach (var ModuleName in ModuleNames)
+			{
+				try
+				{
+					var module = Modules[ModuleName];
+					if (module.Status == ModuleStatus.Disable)
+						return;
+					if (module.Status == ModuleStatus.Paused)
+						throw new ModulePausedException();
+					module.SetStatus(ModuleStatus.Disable);
+					File.WriteAllText(Path.Combine(GetModuleFolder(module), "status"), "disable");
+				}
+				catch
+				{
+					throw new ModuleNotFoundException();
+				}
+			}
+		}
+
 	}
 }

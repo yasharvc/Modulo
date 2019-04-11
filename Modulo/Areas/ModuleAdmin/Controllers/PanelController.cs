@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Modulo.Areas.ModuleAdmin.Controllers
 {
@@ -30,7 +28,41 @@ namespace Modulo.Areas.ModuleAdmin.Controllers
 			var data = new byte[module.Length];
 			module.OpenReadStream().Read(data, 0, (int)module.Length);
 			ModuleManager.UploadZip(data);
-			return RedirectToAction("Index");
+			return RedirectToAction(nameof(Index));
+		}
+		[HttpPost]
+		public JsonResult ChangeModuleStatus(string moduleName, int action)
+		{
+			try
+			{
+				switch (action)
+				{
+					case 0:
+						ModuleManager.EnableModule(moduleName);
+						return Json(new { result = true });
+					case 1:
+						ModuleManager.DisableModule(moduleName);
+						return Json(new { result = true });
+					case 2:
+						ModuleManager.PasueModule(moduleName);
+						return Json(new { result = true });
+					default:
+						return Json(new { result = false, message = "کد حالت اشتباه است" });
+				}
+			}
+			catch
+			{
+				return Json(new { result = false, message = "ماژول موجود نیست" });
+			}
+		}
+		[HttpGet]
+		public ActionResult GetCode(string moduleName)
+		{
+			if (ModuleManager.Modules.ContainsKey(moduleName))
+			{
+				return File(Encoding.UTF8.GetBytes(ModuleManager.Modules[moduleName].ServiceCode), "application/octet-stream", $"{moduleName.Replace(" ", "_")}.cs");
+			}
+			return File(new byte[0], "application/octet-stream", $"{moduleName.Replace(" ", "_")}.cs");
 		}
 	}
 }

@@ -6,13 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Modules\Test\Pages\NewFolder\**" />
-    <Content Remove="Modules\Test\Pages\NewFolder\**" />
-    <EmbeddedResource Remove="Modules\Test\Pages\NewFolder\**" />
-    <None Remove="Modules\Test\Pages\NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="Dapper.SimpleCRUD" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -45,6 +38,7 @@
   <ItemGroup>
     <Folder Include="Areas\ModuleAdmin\Data\" />
     <Folder Include="Areas\ModuleAdmin\Models\" />
+    <Folder Include="Modules\" />
   </ItemGroup>
 
 </Project>
