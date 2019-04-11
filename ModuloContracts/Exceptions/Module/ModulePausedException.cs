@@ -2,7 +2,5 @@
 
 namespace ModuloContracts.Exceptions.Module
 {
-	public class ModulePausedException : Exception
-	{
-	}
+	public class ModulePausedException : Exception { }
 }

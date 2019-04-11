@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
 using System.Threading.Tasks;
 

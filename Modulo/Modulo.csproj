@@ -21,15 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Modules\HomeArea\Pages\Shared\Components\KPI2\KPI.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Modules\HomeArea\Views\Home\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Modules\HomeArea\Views\Security\Login.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Modules\HomePageAuthonticator\Views\Security\Login.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -38,7 +29,7 @@
   <ItemGroup>
     <Folder Include="Areas\ModuleAdmin\Data\" />
     <Folder Include="Areas\ModuleAdmin\Models\" />
-    <Folder Include="Modules\" />
+    <Folder Include="Modules\HomeArea\NewFolder\" />
   </ItemGroup>
 
 </Project>

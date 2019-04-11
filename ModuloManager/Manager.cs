@@ -31,17 +31,10 @@ namespace ModuloManager
 		private readonly string DEFAULT_ACTION_NAME = "Index";
 
 		private List<ModuleIndexData> DependencyIndex { get; set; } = new List<ModuleIndexData>();
-
-		public void AddModuleByDllPath(params string[] Paths)
+		public Manager()
 		{
-			foreach (var Path in Paths)
-			{
-				var mdl = new ManifestResolver(Path);
-				Modules[mdl.Module.Manifest.ModuleName] = mdl.Module;
-				AddAreaControllers(Path, mdl);
-			}
+			LoadModules();
 		}
-
 		public void UploadZip(byte[] bytes, bool Upgrade = true)
 		{
 			var zipHandler = new ModuleZipHandler(bytes);
@@ -109,20 +102,29 @@ namespace ModuloManager
 			var module = GetModuleFromBytes(inspector.GetDll());
 			module.SetStatus(ModuleStatus.Enable);
 			module.SetPathToDll(inspector.GetDllPath());
+			module.SetStatus(GetModuleStatusInFolder(folder));
+			return module;
+		}
+
+		private ModuleStatus GetModuleStatusInFolder(string folder)
+		{
 			if (File.Exists(Path.Combine(folder, "status")))
 			{
 				var statusStr = File.ReadAllText(Path.Combine(folder, "status"));
 				if (statusStr.Contains("disable", StringComparison.OrdinalIgnoreCase))
-					module.SetStatus(ModuleStatus.Disable);
+					return ModuleStatus.Disable;
 				else if (statusStr.Contains("paused", StringComparison.OrdinalIgnoreCase))
-					module.SetStatus(ModuleStatus.Paused);
+					return ModuleStatus.Paused;
 			}
-			return module;
+			return ModuleStatus.Enable;
 		}
+
 		public void AddModule(ModuloContracts.Module.Module module)
 		{
 			UpdateDependencyIndex(module);
-			Modules[module.Manifest.ModuleName] = module;
+			var mdl = new ManifestResolver(module.PathToDll);
+			Modules[mdl.Module.Manifest.ModuleName] = mdl.Module;
+			AddAreaControllers(module.PathToDll, mdl);
 		}
 		private void UpdateDependencyIndex(ModuloContracts.Module.Module module)
 		{
@@ -306,7 +308,17 @@ namespace ModuloManager
 				foreach (var ctrl in item.Value)
 				{
 					if (ctrl.IsPathInArea(pathParts))
-						return Modules[item.Key];
+					{
+						switch (Modules[item.Key].Status)
+						{
+							case ModuleStatus.Enable:
+								return Modules[item.Key];
+							case ModuleStatus.Paused:
+								throw new ModulePausedException();
+							case ModuleStatus.Disable:
+								throw new ModuleDisabledException();
+						}
+					}
 				}
 			}
 			throw new ModuleNotFoundException();
@@ -397,6 +409,54 @@ namespace ModuloManager
 				{
 					throw new ModuleNotFoundException();
 				}
+			}
+		}
+
+		public void LoadModules()
+		{
+			if (Directory.Exists(ModulesRootPath))
+			{
+				if (File.Exists(GetDiFilePath()))
+				{
+					var dependencyIndexJson = File.ReadAllText($"{ModulesRootPath}/di.txt");
+					DependencyIndex = JsonConvert.DeserializeObject<List<ModuleIndexData>>(dependencyIndexJson);
+					LoadModulesWithDependencyIndex();
+				}
+				else
+				{
+					LoadModulesWithFolders();
+				}
+			}
+		}
+		private void LoadModulesWithDependencyIndex()
+		{
+			DependencyIndex.Sort(
+				delegate (ModuleIndexData d1, ModuleIndexData d2)
+				{
+					if (d1.Delta > d2.Delta) return -1;
+					else if (d1.Delta < d2.Delta) return 1;
+					else
+					{
+						if (d1.Cnt > d2.Cnt) return -1;
+						else if (d1.Cnt < d2.Cnt) return 1;
+						else return 0;
+					}
+				});
+			foreach (var dp in DependencyIndex)
+			{
+				var module = InspectFolder(Directory.GetDirectories($"{ModulesRootPath}/").FirstOrDefault(m => m.ToLower().EndsWith(dp.ModuleName.ToLower().Replace("module", ""))));
+				module.SetStatus(GetModuleStatusInFolder(GetModuleFolder(module)));
+				AddModule(module);
+			}
+		}
+		private void LoadModulesWithFolders()
+		{
+			var folders = Directory.GetDirectories($"{ModulesRootPath}/").Where(m => !SpecialFolders.Contains(m.Replace($"{ModulesRootPath}/", "").ToLower()));
+			foreach (var folder in folders)
+			{
+				var module = InspectFolder(folder);
+				module.SetStatus(GetModuleStatusInFolder(GetModuleFolder(module)));
+				AddModule(module);
 			}
 		}
 

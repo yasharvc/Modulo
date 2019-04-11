@@ -1,7 +1,6 @@
 ﻿using ModuloContracts.Enums;
 using ModuloContracts.Module.Interfaces;
 using ModuloContracts.Module.Meta;
-using System;
 using System.Reflection;
 
 namespace ModuloContracts.Module
@@ -43,6 +42,6 @@ namespace ModuloContracts.Module
 			Manifest = manifest;
 		}
 
-		public void SetServiceMeta(ServiceMeta meta) => ServiceMeta = meta;
+		public void SetServiceMeta(ServiceMeta meta) => Manifest.ServiceMeta = meta;
 	}
 }

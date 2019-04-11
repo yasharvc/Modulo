@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Modulo.Classes;
 using ModuloManager;
+using System.Reflection;
 
 namespace Modulo.Areas.ModuleAdmin.Controllers
 {
@@ -28,6 +31,12 @@ namespace Modulo.Areas.ModuleAdmin.Controllers
 
 	public class UserInfoAttribute : ResultFilterAttribute
 	{
+		protected readonly string PathToLogin = "/ModuleAdmin/Security/Login";
+		public UserInfoAttribute() { }
+		public UserInfoAttribute(string pathToLogin)
+		{
+			PathToLogin = pathToLogin;
+		}
 		protected string GetUserToken(HttpRequest request)
 		{
 			return request.Cookies[AuthenticationLayer.UserTokenKey];
@@ -40,8 +49,21 @@ namespace Modulo.Areas.ModuleAdmin.Controllers
 		public override void OnResultExecuting(ResultExecutingContext context)
 		{
 			base.OnResultExecuting(context);
-			((Controller)context.Controller).ViewData["User"] = GetUser(context.HttpContext.Request);
-			new Authentication().ExtendTokenTime(GetUserToken(context.HttpContext.Request));
+			var user = GetUser(context.HttpContext.Request);
+
+			if (user != null && user.ID > 0 && new Authentication().IsTokenValid(GetUserToken(context.HttpContext.Request)))
+			{
+				((Controller)context.Controller).ViewData["User"] = user;
+				new Authentication().ExtendTokenTime(GetUserToken(context.HttpContext.Request));
+			}
+			else
+			{
+				var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+				if (controllerActionDescriptor != null && controllerActionDescriptor.MethodInfo.GetCustomAttribute(typeof(AllowAnonymousAttribute)) != null)
+					return;
+				context.HttpContext.Response.Redirect(PathToLogin);
+				context.Cancel = true;
+			}
 		}
 	}
 }

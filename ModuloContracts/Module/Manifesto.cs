@@ -1,4 +1,5 @@
 ﻿using ModuloContracts.Module.Interfaces;
+using ModuloContracts.Module.Meta;
 using ModuloContracts.MVC;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,8 @@ namespace ModuloContracts.Module
 				return res;
 			}
 		}
+
+		public ServiceMeta ServiceMeta { get; set; }
 
 		public virtual void OnConfigure() { }
 	}
