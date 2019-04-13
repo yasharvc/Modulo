@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using Modulo.Classes;
 using ModuloContracts;
 using ModuloContracts.Data;
+using ModuloContracts.Exceptions.Module;
 using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Hub;
 using ModuloContracts.Hub.Interfaces;
@@ -64,11 +65,6 @@ namespace Modulo
 				});
 				app.UseMvcWithDefaultRoute();
 				InvocationHub.InvokationHubProvider = this;
-				//SamplePlugIns();
-				//SetupEvents(manager);
-
-				//SetupSystemProvider(manager);
-				//SetupInvokationHub(manager, app.ApplicationServices);
 			}).Build();
 		}
 
@@ -108,6 +104,14 @@ namespace Modulo
 						$"{requestData.ContentLength}\r\nBodyString:{requestData.BodyString}\r\nBoundary:{requestData.Boundary}\r\n" +
 						$"{string.Join(",", requestData.RequestParameters.Select(m => $"{m.Name}={m.Value}").ToArray())}");
 				}
+			}
+			catch (ModuleDisabledException mdl)
+			{
+				await context.Response.WriteAsync($"Module '{mdl.Message}' Is Disabled!");
+			}
+			catch (ModulePausedException mdl)
+			{
+				await context.Response.WriteAsync($"Module '{mdl.Message}' Is Paused!");
 			}
 			catch (ModuleNotFoundException)
 			{

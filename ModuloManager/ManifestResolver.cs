@@ -1,20 +1,24 @@
 ﻿using DllLoader;
+using ModuloContracts.Module;
 using ModuloContracts.Module.Interfaces;
-using System.Reflection;
+using System;
+using System.IO;
 
 namespace ModuloManager
 {
 	public class ManifestResolver
 	{
-		Assembly Assembly { get; set; }
+		public static string ModulesRootPath => "Modules";
+		System.Reflection.Assembly Assembly { get; set; }
 		public ModuloContracts.Module.Module Module { get; private set; }
-		public ManifestResolver(string pathToDll) => LoadDll(pathToDll);
 
-		private void LoadDll(string pathToDll)
+		public ManifestResolver(Module module) => LoadDll(module);
+
+		private void LoadDll(Module module)
 		{
-			Loader loader = new Loader(pathToDll);
+			Loader loader = new Loader(module.PathToDll);
 			Assembly = loader.GetMainAssembly();
-			Module = new ModuloContracts.Module.Module(pathToDll, GetManifest(pathToDll), ModuloContracts.Enums.ModuleStatus.Disable);
+			Module = new Module(module.PathToDll, GetManifest(module.PathToDll), ModuloContracts.Enums.ModuleStatus.Disable);
 		}
 		public IManifest GetManifest(string Path)
 		{
@@ -22,6 +26,10 @@ namespace ModuloManager
 			var invoker = new Invoker(loader);
 			var obj = invoker.CreateInstanceByParentType<IManifest>();
 			return obj;
+		}
+		public static string GetModuleFolder(Module module)
+		{
+			return Path.Combine(ModulesRootPath, module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
 		}
 	}
 }

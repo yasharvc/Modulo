@@ -1,4 +1,4 @@
-﻿using ModuleContracts.Module.Service;
+﻿using ModuloContracts.Module.Service;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

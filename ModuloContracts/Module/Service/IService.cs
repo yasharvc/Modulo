@@ -1,4 +1,4 @@
-﻿namespace ModuleContracts.Module.Service
+﻿namespace ModuloContracts.Module.Service
 {
 	public interface IService
 	{

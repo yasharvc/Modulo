@@ -49,8 +49,8 @@
 					<div class="image img-cir img-120">
 						<img src="~/Admin/images/icon/avatar-big-01.jpg" alt="John Doe" />
 					</div>
-					<h4 class="name">@*@((ViewData["User"] as CMMS_Portal.Classes.User).FullName)*@</h4>
-					<a href="/Management/Manage/Logout">خروج <i class="fas fa-sign-out-alt"></i></a>
+					<h4 class="name">@((ViewData["User"] as Modulo.Classes.User).FullName)</h4>
+					<a href="/ModuleAdmin/Security/Logout">خروج <i class="fas fa-sign-out-alt"></i></a>
 				</div>
 				<nav class="navbar-sidebar2">
 					@(await Component.InvokeAsync("AdminMenu"))

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ModuleContracts.Module.Service
+namespace ModuloContracts.Module.Service
 {
 	public class ServiceFunction : Attribute
 	{

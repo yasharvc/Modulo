@@ -44,8 +44,7 @@ namespace Modulo.Areas.ModuleAdmin.Controllers
 						ModuleManager.DisableModule(moduleName);
 						return Json(new { result = true });
 					case 2:
-						ModuleManager.PasueModule(moduleName);
-						return Json(new { result = true });
+						return Json(new { result = false, message = "این حالت در دسترس نیست" });
 					default:
 						return Json(new { result = false, message = "کد حالت اشتباه است" });
 				}

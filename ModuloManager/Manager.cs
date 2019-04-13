@@ -1,7 +1,7 @@
 ﻿using DllLoader;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ModuleContracts.Module.Service;
+using ModuloContracts.Module.Service;
 using ModuloContracts.Data;
 using ModuloContracts.Enums;
 using ModuloContracts.Exceptions.Module;
@@ -23,7 +23,6 @@ namespace ModuloManager
 {
 	public class Manager
 	{
-		public static string ModulesRootPath => "Modules";
 		private readonly List<string> SpecialFolders = new List<string> { "temp" };
 		public Dictionary<string, ModuloContracts.Module.Module> Modules { get; private set; } = new Dictionary<string, ModuloContracts.Module.Module>();
 		private Dictionary<string, List<AreaController>> AreaControllers = new Dictionary<string, List<AreaController>>();
@@ -122,9 +121,10 @@ namespace ModuloManager
 		public void AddModule(ModuloContracts.Module.Module module)
 		{
 			UpdateDependencyIndex(module);
-			var mdl = new ManifestResolver(module.PathToDll);
+			var mdl = new ManifestResolver(module);
 			Modules[mdl.Module.Manifest.ModuleName] = mdl.Module;
 			AddAreaControllers(module.PathToDll, mdl);
+			Modules[mdl.Module.Manifest.ModuleName].SetStatus(GetModuleStatusInFolder(GetModuleFolder(module)));
 		}
 		private void UpdateDependencyIndex(ModuloContracts.Module.Module module)
 		{
@@ -191,7 +191,7 @@ namespace ModuloManager
 		}
 		private string GetDiFilePath()
 		{
-			return Path.Combine(ModulesRootPath, "di.txt");
+			return Path.Combine(ManifestResolver.ModulesRootPath, "di.txt");
 		}
 		private void HistoryModule(ModuleZipHandler zipHandler, ModuloContracts.Module.Module module)
 		{
@@ -199,7 +199,7 @@ namespace ModuloManager
 		}
 		private string GetModuleFolder(ModuloContracts.Module.Module module)
 		{
-			return Path.Combine(ModulesRootPath, module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
+			return Path.Combine(ManifestResolver.ModulesRootPath, module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
 		}
 		#region Upgrade & Downgrade
 		private void Downgrade(ModuloContracts.Module.Module module)
@@ -314,9 +314,9 @@ namespace ModuloManager
 							case ModuleStatus.Enable:
 								return Modules[item.Key];
 							case ModuleStatus.Paused:
-								throw new ModulePausedException();
+								throw new ModulePausedException(Modules[item.Key]);
 							case ModuleStatus.Disable:
-								throw new ModuleDisabledException();
+								throw new ModuleDisabledException(Modules[item.Key]);
 						}
 					}
 				}
@@ -381,7 +381,7 @@ namespace ModuloManager
 					if (module.Status == ModuleStatus.Enable)
 						return;
 					if (module.Status == ModuleStatus.Paused)
-						throw new ModulePausedException();
+						throw new ModulePausedException(module);
 					module.SetStatus(ModuleStatus.Enable);
 					File.Delete(Path.Combine(GetModuleFolder(module), "status"));
 				}
@@ -401,7 +401,7 @@ namespace ModuloManager
 					if (module.Status == ModuleStatus.Disable)
 						return;
 					if (module.Status == ModuleStatus.Paused)
-						throw new ModulePausedException();
+						throw new ModulePausedException(module);
 					module.SetStatus(ModuleStatus.Disable);
 					File.WriteAllText(Path.Combine(GetModuleFolder(module), "status"), "disable");
 				}
@@ -414,11 +414,11 @@ namespace ModuloManager
 
 		public void LoadModules()
 		{
-			if (Directory.Exists(ModulesRootPath))
+			if (Directory.Exists(ManifestResolver.ModulesRootPath))
 			{
 				if (File.Exists(GetDiFilePath()))
 				{
-					var dependencyIndexJson = File.ReadAllText($"{ModulesRootPath}/di.txt");
+					var dependencyIndexJson = File.ReadAllText($"{ManifestResolver.ModulesRootPath}/di.txt");
 					DependencyIndex = JsonConvert.DeserializeObject<List<ModuleIndexData>>(dependencyIndexJson);
 					LoadModulesWithDependencyIndex();
 				}
@@ -444,18 +444,16 @@ namespace ModuloManager
 				});
 			foreach (var dp in DependencyIndex)
 			{
-				var module = InspectFolder(Directory.GetDirectories($"{ModulesRootPath}/").FirstOrDefault(m => m.ToLower().EndsWith(dp.ModuleName.ToLower().Replace("module", ""))));
-				module.SetStatus(GetModuleStatusInFolder(GetModuleFolder(module)));
+				var module = InspectFolder(Directory.GetDirectories($"{ManifestResolver.ModulesRootPath}/").FirstOrDefault(m => m.ToLower().EndsWith(dp.ModuleName.ToLower().Replace("module", ""))));
 				AddModule(module);
 			}
 		}
 		private void LoadModulesWithFolders()
 		{
-			var folders = Directory.GetDirectories($"{ModulesRootPath}/").Where(m => !SpecialFolders.Contains(m.Replace($"{ModulesRootPath}/", "").ToLower()));
+			var folders = Directory.GetDirectories($"{ManifestResolver.ModulesRootPath}/").Where(m => !SpecialFolders.Contains(m.Replace($"{ManifestResolver.ModulesRootPath}/", "").ToLower()));
 			foreach (var folder in folders)
 			{
 				var module = InspectFolder(folder);
-				module.SetStatus(GetModuleStatusInFolder(GetModuleFolder(module)));
 				AddModule(module);
 			}
 		}
