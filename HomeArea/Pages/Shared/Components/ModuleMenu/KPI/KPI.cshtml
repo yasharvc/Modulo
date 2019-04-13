@@ -1,0 +1,7 @@
+﻿@model IEnumerable<ModuloContracts.Module.Interfaces.IManifest>
+<ul>
+@foreach (var manifest in Model)
+{
+	<li>@manifest.Title - @manifest.Description</li>
+}
+</ul>

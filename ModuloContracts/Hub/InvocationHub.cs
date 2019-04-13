@@ -1,8 +1,11 @@
-﻿using ModuloContracts.Hub.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
+using ModuloContracts.Hub.Interfaces;
+using ModuloContracts.Module;
+using ModuloContracts.Module.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
-using System.Text;
 
 namespace ModuloContracts.Hub
 {
@@ -13,7 +16,7 @@ namespace ModuloContracts.Hub
 		private const string GetModulesPath = "/Debug/GetModules";
 		private const string GetUsersPath = "/Debug/GetUsers";
 		private static string BaseUri = "http://192.168.0.56/";
-		public static IInvocationHubProvider InvokationHubProvider { get; set; } = null;
+		public static InvocationHubProvider InvokationHubProvider { get; set; } = null;
 		public static bool IsInModuleDebugMode => InvokationHubProvider == null;
 
 		public static string GetConnectionString()
@@ -24,6 +27,18 @@ namespace ModuloContracts.Hub
 			}
 			else
 				return SystemServiceProvider.SystemServicesProvider.GetConnectionString(false);
+		}
+
+		public static IEnumerable<IManifest> GetModules()
+		{
+			if (IsInModuleDebugMode)
+				return new List<IManifest> {
+					new DummyManifest("Dummy1","First dummy module","Description for first dummy module"),
+					new DummyManifest("Dummy2","Second dummy module","Description for second dummy module"),
+					new DummyManifest("Dummy3","Third dummy module","Description for third dummy module")
+				};
+			else
+				return InvokationHubProvider.GetModuleList().Select(m => m.Manifest);
 		}
 
 		private static string HttpPost(string BaseUrl, string FunctionPath, List<KeyValuePair<string, string>> parameters = null)
@@ -39,6 +54,7 @@ namespace ModuloContracts.Hub
 			}
 			return "";
 		}
+
 		private static string HttpGet(string BaseUrl, string FunctionPath)
 		{
 			var client = new HttpClient { BaseAddress = new Uri(BaseUrl) };

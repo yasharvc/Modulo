@@ -11,7 +11,6 @@ namespace HomeArea.Controllers
 
 		public IActionResult Index()
         {
-			ViewData["x"] = Request.Headers["ModuleName"];
             return View();
         }
 

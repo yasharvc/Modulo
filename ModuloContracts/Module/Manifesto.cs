@@ -47,4 +47,26 @@ namespace ModuloContracts.Module
 
 		public virtual void OnConfigure() { }
 	}
+
+	public class DummyManifest : Manifesto
+	{
+		string name = "DummyName";
+		string title = "Dummy Title";
+		string desc = "Dummy Description";
+
+		public override string ModuleName => name;
+
+		public override string Title => title;
+
+		public override string Description => desc;
+
+		public DummyManifest(string name) : this(name, "", "") { }
+		public DummyManifest(string name, string title) : this(name, title, "") { }
+		public DummyManifest(string name, string title, string description)
+		{
+			this.name = name;
+			this.title = title;
+			this.desc = description;
+		}
+	}
 }

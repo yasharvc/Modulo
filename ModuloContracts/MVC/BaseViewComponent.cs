@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace ModuloContracts.MVC
@@ -14,17 +16,21 @@ namespace ModuloContracts.MVC
 			HttpContext = base.HttpContext;
 		}
 
-		public IViewComponentResult GetView(string ViewName)
+		public IViewComponentResult GetView(string ViewComponentName, [CallerMemberName] string viewName = "") => GetView(ViewComponentName, viewName, null);
+
+		public IViewComponentResult GetView(string ViewComponentName,string ViewName,object model = null)
 		{
-			return GetView(ViewName, ViewName);
+			return GetView(ViewComponentName, ViewName, ViewName, model);
 		}
-		public IViewComponentResult GetView(string folder,string ViewName)
+		public IViewComponentResult GetView(string ViewComponentName,string folder,string ViewName,object model = null)
 		{
 			if (folder.StartsWith("/"))
 				folder = folder.Substring(1);
 			if (folder.EndsWith("/"))
 				folder = folder.Substring(0, folder.Length - 1);
-			return View($"~/Modules/{HttpContext.Request.Headers["ModuleName"]}/Pages/Shared/Components/{folder}/{ViewName}.cshtml");
+			if (Hub.InvocationHub.IsInModuleDebugMode)
+				return View($"{folder}/{ViewName}", model);
+			return View($"~/Modules/{HttpContext.Request.Headers["ModuleName"]}/Pages/Shared/Components/{ViewComponentName}/{folder}/{ViewName}.cshtml", model);
 		}
 
 		public abstract Task<IViewComponentResult> InvokeAsync();

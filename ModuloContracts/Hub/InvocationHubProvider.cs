@@ -9,12 +9,13 @@ using System.Text;
 
 namespace ModuloContracts.Hub
 {
-	public class InvocationHubProvider : IInvocationHubProvider
+	public abstract class InvocationHubProvider : IInvocationHubProvider
 	{
 		public event ManifestRequiredEventArgs OnManifestReuqired;
 		//public event ListArg<Users> OnUsersListRequired;
 		public event UserAgentEventArg OnUserAgentRequired;
 		public event WebApplicationDataEventArg OnWebApplicationDataRequired;
+		public event ListArg<Module.Module> OnModuleListRequired;
 
 		//public event UsersInfoEventArg OnCurrentUserRequired;
 
@@ -22,12 +23,8 @@ namespace ModuloContracts.Hub
 		{
 			return OnManifestReuqired?.Invoke(moduleName);
 		}
-		//public IEnumerable<Users> GetUsers()
-		//{
-		//	return OnUsersListRequired?.Invoke();
-		//}
 
 		public UserAgent GetUserAgent(HttpContext ctx = null) => OnUserAgentRequired?.Invoke(ctx);
-		//public Users GetCurrentUser() => OnCurrentUserRequired?.Invoke();
+		public abstract List<Module.Module> GetModuleList();
 	}
 }

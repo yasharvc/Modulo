@@ -12,6 +12,7 @@ using ModuloContracts.Exceptions.Module;
 using ModuloContracts.Exceptions.SystemExceptions;
 using ModuloContracts.Hub;
 using ModuloContracts.Hub.Interfaces;
+using ModuloContracts.Module;
 using ModuloContracts.Web.UserAgent;
 using ModuloManager;
 using System;
@@ -26,14 +27,10 @@ using WebUtility;
 namespace Modulo
 {
 
-	public class Program:IInvocationHubProvider
+	public class Program:InvocationHubProvider
 	{
 		public static WebApplicationData WebApplicationData { get; private set; } = new WebApplicationData();
 		public static Manager Manager => WebApplicationData.GetService<Manager>();
-
-		public event ManifestRequiredEventArgs OnManifestReuqired;
-		public event UserAgentEventArg OnUserAgentRequired;
-		public event WebApplicationDataEventArg OnWebApplicationDataRequired;
 
 		public static void Main(string[] args)
 		{
@@ -192,5 +189,7 @@ namespace Modulo
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
 				.UseStartup<Startup>();
+
+		public override List<Module> GetModuleList() => Manager.Modules.Values.ToList();
 	}
 }
