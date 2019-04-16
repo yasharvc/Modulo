@@ -321,6 +321,19 @@ namespace ModuloManager
 					}
 				}
 			}
+			if (Modules.ContainsKey(pathParts.ModuleName))
+			{
+				var name = pathParts.ModuleName;
+				switch (Modules[name].Status)
+				{
+					case ModuleStatus.Enable:
+						return Modules[name];
+					case ModuleStatus.Paused:
+						throw new ModulePausedException(Modules[name]);
+					case ModuleStatus.Disable:
+						throw new ModuleDisabledException(Modules[name]);
+				}
+			}
 			throw new ModuleNotFoundException();
 		}
 

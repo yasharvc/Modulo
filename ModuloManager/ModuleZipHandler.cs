@@ -82,6 +82,7 @@ namespace ModuloManager
 				}
 				else
 				{
+					Directory.CreateDirectory(target.FullName);
 					file.CopyTo(Path.Combine(target.FullName, file.Name), true);
 				}
 			}

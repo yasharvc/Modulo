@@ -83,41 +83,7 @@
 	</style>
 </head>
 <body class="w3-theme-l5" dir="rtl" style="direction:rtl">
-	<div class="w3-row">
-		<div class="w3-col w3-bar-block w3-hide-small w3-blue" style="width:200px;height:calc(100vh);">
-			<div class="w3-container w3-dark-grey w3-center">
-				<h4></h4>
-			</div>
-			<button class="w3-button w3-block w3-right-align" onclick="accordion('demoAcc')"><span class="w3-tag w3-blue w3-left w3-margin-left"><i class="fa fa-chevron-down"></i></span></button>
-			<div id="demoAcc" class="w3-bar-block w3-hide w3-white w3-card-4">
-				<a href="#" class="w3-bar-item w3-button" onclick="loadTree()"><i class="fa fa-sitemap"></i>  </a>
-				<a href="#" class="w3-bar-item w3-button" onclick="loadAddCoding()"><i class="fa fa-plus-circle"></i>  </a>
-				<button class="w3-button w3-block w3-right-align" onclick="accordion('demoAcc2')"><span class="w3-tag w3-blue w3-left w3-margin-left"><i class="fa fa-chevron-down"></i></span></button>
-				<div id="demoAcc2" class="w3-bar-block w3-hide w3-white w3-card-4">
-					<a href="#" class="w3-bar-item w3-button" onclick="loadTree()"><i class="fa fa-sitemap"></i>  </a>
-					<a href="#" class="w3-bar-item w3-button" onclick="loadAddCoding()"><i class="fa fa-plus-circle"></i>  </a>
-				</div>
-			</div>
-			<script>
-				function accordion(id) {
-					var x = document.getElementById(id);
-					if (x.className.indexOf("w3-show") == -1) {
-						x.className += " w3-show";
-						x.previousElementSibling.className += " w3-green";
-					} else {
-						x.className = x.className.replace(" w3-show", "");
-						x.previousElementSibling.className =
-							x.previousElementSibling.className.replace(" w3-green", "");
-					}
-				}
-
-			</script>
-		</div>
-		<div class="w3-rest w3-container w3-bar-block">
-			@RenderBody()
-		</div>
-	</div>
-	<br>
+	@RenderBody()
 
 	<div id="___errorModal" class="w3-modal">
 		<div class="w3-modal-content w3-animate-top w3-card-4">

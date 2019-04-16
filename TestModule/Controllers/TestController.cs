@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModuloContracts.MVC;
 
 namespace TestModule.Controllers
 {
-    public class TestController : Controller
+    public class TestController : UIBaseController
     {
 		public class data
 		{

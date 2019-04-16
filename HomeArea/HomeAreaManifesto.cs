@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using HomeArea.Components;
-using ModuloContracts;
+﻿using HomeArea.Components;
 using ModuloContracts.Module;
 using ModuloContracts.MVC;
+using System.Collections.Generic;
 
 namespace HomeArea
 {

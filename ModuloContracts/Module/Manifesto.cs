@@ -3,7 +3,6 @@ using ModuloContracts.Module.Meta;
 using ModuloContracts.MVC;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace ModuloContracts.Module

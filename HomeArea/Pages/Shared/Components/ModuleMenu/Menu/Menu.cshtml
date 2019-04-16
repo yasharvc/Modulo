@@ -1,0 +1,25 @@
+﻿@model IEnumerable<ModuloContracts.Module.Interfaces.IManifest>
+<ul>
+	@foreach (var manifest in Model)
+	{
+	<li>
+		@manifest.ModuleName:
+			<ol>
+				@foreach (var menu in manifest.Menus)
+				{
+				<li><a href="@manifest.ModuleName/@menu.Link.Controller.Name.Replace("Controller","",StringComparison.OrdinalIgnoreCase)/@menu.Link.Action">@menu.Title</a></li>
+				}
+			</ol>
+	</li>
+	}
+</ul>
+@*<button class="w3-button w3-block w3-right-align" onclick="accordion('demoAcc')"><span class="w3-tag w3-blue w3-left w3-margin-left"><i class="fa fa-chevron-down"></i></span></button>
+<div id="demoAcc" class="w3-bar-block w3-hide w3-white w3-card-4">
+	<a href="#" class="w3-bar-item w3-button" onclick="loadTree()"><i class="fa fa-sitemap"></i>  </a>
+	<a href="#" class="w3-bar-item w3-button" onclick="loadAddCoding()"><i class="fa fa-plus-circle"></i>  </a>
+	<button class="w3-button w3-block w3-right-align" onclick="accordion('demoAcc2')"><span class="w3-tag w3-blue w3-left w3-margin-left"><i class="fa fa-chevron-down"></i></span></button>
+	<div id="demoAcc2" class="w3-bar-block w3-hide w3-white w3-card-4">
+		<a href="#" class="w3-bar-item w3-button" onclick="loadTree()"><i class="fa fa-sitemap"></i>  </a>
+		<a href="#" class="w3-bar-item w3-button" onclick="loadAddCoding()"><i class="fa fa-plus-circle"></i>  </a>
+	</div>
+</div>*@

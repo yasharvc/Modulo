@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using System.Runtime.CompilerServices;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ModuloContracts.MVC
 {
-	public abstract class BaseViewComponent : ViewComponent,IViewComponent
+	public abstract class BaseViewComponent : ViewComponent, IViewComponent
 	{
 		public new HttpContext HttpContext { get; set; }
 		public new HttpRequest Request => HttpContext.Request;
@@ -15,12 +14,15 @@ namespace ModuloContracts.MVC
 		{
 			HttpContext = base.HttpContext;
 		}
-
-		public IViewComponentResult GetView(string ViewComponentName, [CallerMemberName] string viewName = "") => GetView(ViewComponentName, viewName, null);
-
-		public IViewComponentResult GetView(string ViewComponentName,string ViewName,object model = null)
+		public IViewComponentResult GetView(string viewName, object model)
 		{
-			return GetView(ViewComponentName, ViewName, ViewName, model);
+			var ViewComponentName = ((ViewComponentAttribute)GetType().GetCustomAttribute(typeof(ViewComponentAttribute))).Name;
+			return GetView(ViewComponentName, viewName, model);
+		}
+
+		public IViewComponentResult GetView(string FolderName,string ViewName,object model = null)
+		{
+			return GetView(FolderName, ViewName, ViewName, model);
 		}
 		public IViewComponentResult GetView(string ViewComponentName,string folder,string ViewName,object model = null)
 		{
