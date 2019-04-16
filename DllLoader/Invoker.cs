@@ -52,6 +52,8 @@ namespace DllLoader
 			}
 		}
 
+		public IEnumerable<Type> GetTypes() => Loader.GetTypes();
+
 		private T InvokeMethodWithConvertedParameters<T>(object obj,MethodInfo method, Dictionary<string, object> convertedParameters) where T:class
 		{
 			var parameters = method.GetParameters();

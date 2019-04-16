@@ -91,6 +91,15 @@ namespace Modulo
 			{
 				PrepareRequstData(context, requestData);
 				context.Response.StatusCode = 200;
+				var permissionProvider = Manager.GetPermissionProviderByPathParts(context, requestData.PathParts);
+				if(permissionProvider != null)
+				{
+					if (!permissionProvider.IsAuthenticated(context))
+					{
+						await permissionProvider.RedirectToAuthenticationPathAsync(context);
+						return;
+					}
+				}
 				var mdl = Manager.GetModuleByPathParts(context, requestData.PathParts);
 				if (mdl != null)
 					await Manager.InvokeAction(context, requestData, mdl).ExecuteResultAsync(actionContext);

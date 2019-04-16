@@ -26,6 +26,7 @@ namespace ModuloManager
 		private readonly List<string> SpecialFolders = new List<string> { "temp" };
 		public Dictionary<string, ModuloContracts.Module.Module> Modules { get; private set; } = new Dictionary<string, ModuloContracts.Module.Module>();
 		private Dictionary<string, List<AreaController>> AreaControllers = new Dictionary<string, List<AreaController>>();
+		private Dictionary<string, PermissionProvider> PermissionProviders = new Dictionary<string, PermissionProvider>();
 		private readonly string DEFAULT_CONTROLLER_NAME = "Home";
 		private readonly string DEFAULT_ACTION_NAME = "Index";
 
@@ -89,6 +90,8 @@ namespace ModuloManager
 				Directory.Delete(dir, true);
 		}
 
+		public PermissionProvider GetPermissionProviderByPathParts(HttpContext context, PathParts pathParts) => PermissionProviders.Values.FirstOrDefault(m => m.IsInScope(pathParts));
+
 		public void Resolve(byte[] Dllbytes)
 		{
 			var module = GetModuleFromBytes(Dllbytes);
@@ -124,6 +127,7 @@ namespace ModuloManager
 			var mdl = new ManifestResolver(module);
 			Modules[mdl.Module.Manifest.ModuleName] = mdl.Module;
 			AddAreaControllers(module.PathToDll, mdl);
+			AddPermissionProvider(module.PathToDll, mdl);
 			Modules[mdl.Module.Manifest.ModuleName].SetStatus(GetModuleStatusInFolder(GetModuleFolder(module)));
 		}
 		private void UpdateDependencyIndex(ModuloContracts.Module.Module module)
@@ -300,6 +304,13 @@ namespace ModuloManager
 					AreaControllers[mdl.Module.Manifest.ModuleName].Add(invoker.CreateInstance<AreaController>(ctrl));
 				}
 			}
+		}
+		private void AddPermissionProvider(string Path, ManifestResolver mdl)
+		{
+			Invoker invoker = new Invoker(Path);
+			var permissionProvider = invoker.GetTypes().FirstOrDefault(m => m.BaseType == typeof(PermissionProvider));
+			if (permissionProvider != null)
+				PermissionProviders[mdl.Module.Manifest.ModuleName] = invoker.CreateInstance<PermissionProvider>(permissionProvider);
 		}
 		public ModuloContracts.Module.Module GetModuleByPathParts(HttpContext context,PathParts pathParts)
 		{

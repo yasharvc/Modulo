@@ -29,10 +29,7 @@ namespace HomeArea.Controllers
 				return true;
 			return CheckUserPermission();
 		}
-		private bool CheckUserPermission()
-		{
-			return HttpContext.Request.Cookies["UserID"] != null;
-		}
+		private bool CheckUserPermission() => new UserSiteAuthenticator().IsAuthenticated(HttpContext);
 		private bool IsPartsEligable(PathParts parts)
 		{
 			var res = parts.Controller.ToLower() == "security" && parts.Action.ToLower() == "login" && parts.ModuleName.ToLower() == new HomeAreaManifesto().ModuleName.ToLower() && parts.Area == "";

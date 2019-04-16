@@ -35,6 +35,9 @@ namespace DllLoader
 			return GetMainAssembly().GetTypes().Single(m => m.Name.Equals(className, StringComparison.OrdinalIgnoreCase)).FullName;
 		}
 
+		public IEnumerable<Type> GetTypes() => GetMainAssembly().GetTypes();
+
 		private byte[] GetDllBytes(string pathToDll) => File.ReadAllBytes(pathToDll);
+
 	}
 }

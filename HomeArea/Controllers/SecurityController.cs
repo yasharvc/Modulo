@@ -10,7 +10,7 @@ namespace HomeArea.Controllers
 		[HttpPost]
 		public IActionResult Login(string username, string password)
 		{
-			HttpContext.Response.Cookies.Append("UserID", username);
+			new UserSiteAuthenticator().Authenticate(HttpContext, "test");
 			return Redirect("/Home/Index");
 		}
 	}

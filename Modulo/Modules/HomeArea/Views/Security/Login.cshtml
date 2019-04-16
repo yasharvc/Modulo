@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -106,12 +106,12 @@
 					u: un,
 					p: pass
 				},
-				success: function (data) {
+				success: function (dynamic) {
 					loginSpin.fadeOut();
-					if (data.result) {
-						window.location = (data.url);
+					if (dynamic) {
+						window.location = (dynamic);
 					} else {
-						error.html(data.msg);
+						error.html(dynamic);
 						errorDiv.fadeIn();
 					}
 				}

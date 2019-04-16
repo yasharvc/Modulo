@@ -1,1 +1,1 @@
-[{"ModuleName":"HomeArea","Dep":[],"Cnt":0,"Delta":0},{"ModuleName":"TestModule","Dep":[],"Cnt":0,"Delta":0}]
+[{"ModuleName":"HomeArea","Dep":[],"Cnt":0,"Delta":0}]
