@@ -1,32 +1,6 @@
 @using ModuloContracts.MVC
 @{
 	ViewData["Title"] = "Index";
-	Layout = "_Layout";
+	Layout = "~/Modules/HomeArea/Views/Shared/_Layout.cshtml";
 }
-
-<div class="w3-row">
-	<div class="w3-col w3-bar-block w3-hide-small w3-blue" style="width:200px;height:calc(dynamic);">
-		<div class="w3-container w3-dark-grey w3-center">
-			<h4>منو</h4>
-		</div>
-		@await Component.Component(Context, "ModuleMenu")
-		<script>
-			function accordion(dynamic) {
-				var x = document.getElementById(dynamic);
-				if (x.className.indexOf("w3-show") == -1) {
-					x.className += " w3-show";
-					x.previousElementSibling.className += " w3-green";
-				} else {
-					x.className = x.className.replace(" w3-show", "");
-					x.previousElementSibling.className =
-						x.previousElementSibling.className.replace(" w3-green", "");
-				}
-			}
-
-		</script>
-	</div>
-	<div class="w3-rest w3-container w3-bar-block">
-		بدنه صفحه
-	</div>
-</div>
-<br>
+بدنه صفحه

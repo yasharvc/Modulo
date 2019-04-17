@@ -21,7 +21,7 @@ namespace TestModule.Controllers
 		}
 		public IActionResult Index()
         {
-			return Json(new { name = "Yashar", age = 12 });
+			return View();
         }
 
 		[HttpPost]
