@@ -1,6 +1,7 @@
 ﻿@{
 	Layout = null;
 }
+@using ModuloContracts.MVC
 <!DOCTYPE html>
 <html>
 <head>
@@ -92,7 +93,7 @@
 			<div class="w3-container w3-dark-grey w3-center">
 				<h4>منو</h4>
 			</div>
-			@await Component.Component(Context, "ModuleMenu")
+			@await Component.Component("HomeArea", "ModuleMenu")
 			<script>
 				function accordion(dynamic) {
 					var x = document.getElementById(dynamic);

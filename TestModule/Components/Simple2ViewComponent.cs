@@ -8,7 +8,7 @@ namespace TestModule.Components
 	{
 		public override async Task<IViewComponentResult> InvokeAsync()
 		{
-			return await Task.FromResult(GetView("KPI", "KPI2"));
+			return await Task.FromResult(GetView("TestModule","KPI", "KPI2"));
 		}
 	}
 }

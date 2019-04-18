@@ -10,7 +10,7 @@ namespace HomeArea.Components
 		public override async Task<IViewComponentResult> InvokeAsync()
 		{
 			var modules = ModuloContracts.Hub.InvocationHub.GetModules();
-			return await Task.FromResult(GetView("Menu", modules));
+			return await Task.FromResult(GetView("HomeArea","Menu", modules));
 		}
 	}
 }

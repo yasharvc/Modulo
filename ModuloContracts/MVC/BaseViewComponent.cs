@@ -14,17 +14,17 @@ namespace ModuloContracts.MVC
 		{
 			HttpContext = base.HttpContext;
 		}
-		public IViewComponentResult GetView(string viewName, object model)
+		public IViewComponentResult GetView(string ModuleName, string viewName, object model)
 		{
 			var ViewComponentName = ((ViewComponentAttribute)GetType().GetCustomAttribute(typeof(ViewComponentAttribute))).Name;
-			return GetView(ViewComponentName, viewName, model);
+			return GetView(ModuleName, ViewComponentName, viewName, model);
 		}
 
-		public IViewComponentResult GetView(string FolderName,string ViewName,object model = null)
+		public IViewComponentResult GetView(string ModuleName, string FolderName, string ViewName, object model = null)
 		{
-			return GetView(FolderName, ViewName, ViewName, model);
+			return GetView(ModuleName, FolderName, ViewName, ViewName, model);
 		}
-		public IViewComponentResult GetView(string ViewComponentName,string folder,string ViewName,object model = null)
+		public IViewComponentResult GetView(string ModuleName, string ViewComponentName, string folder, string ViewName, object model = null)
 		{
 			if (folder.StartsWith("/"))
 				folder = folder.Substring(1);
@@ -32,7 +32,7 @@ namespace ModuloContracts.MVC
 				folder = folder.Substring(0, folder.Length - 1);
 			if (Hub.InvocationHub.IsInModuleDebugMode)
 				return View($"{folder}/{ViewName}", model);
-			return View($"~/Modules/{HttpContext.Request.Headers["ModuleName"]}/Pages/Shared/Components/{ViewComponentName}/{folder}/{ViewName}.cshtml", model);
+			return View($"~/Modules/{ModuleName}/Pages/Shared/Components/{ViewComponentName}/{folder}/{ViewName}.cshtml", model);
 		}
 
 		public abstract Task<IViewComponentResult> InvokeAsync();
