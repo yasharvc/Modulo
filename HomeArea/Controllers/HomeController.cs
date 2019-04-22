@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.MVC;
 using ModuloContracts.Web;
 using System;
@@ -25,6 +24,7 @@ namespace HomeArea.Controllers
 
 		public override bool IsUrlAllowed(PathParts pathParts)
 		{
+			
 			if (IsPartsEligable(pathParts))
 				return true;
 			return CheckUserPermission();

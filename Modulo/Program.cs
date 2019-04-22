@@ -27,10 +27,12 @@ using WebUtility;
 namespace Modulo
 {
 
-	public class Program:InvocationHubProvider
+	public class Program:InvocationHubProvider, ISystemServiceProvider
 	{
 		public static WebApplicationData WebApplicationData { get; private set; } = new WebApplicationData();
 		public static Manager Manager => WebApplicationData.GetService<Manager>();
+
+		public IEnumerable<ModuleInformation> ModulesInformations => new List<ModuleInformation>();
 
 		public static void Main(string[] args)
 		{
@@ -61,8 +63,14 @@ namespace Modulo
 						template: "{controller=Home}/{action=Index}/{id?}");
 				});
 				app.UseMvcWithDefaultRoute();
+				SystemServiceProvider.OnSystemServiceProvider += SystemServiceProvider_OnSystemServiceProvider;
 				InvocationHub.InvokationHubProvider = this;
 			}).Build();
+		}
+
+		private ISystemServiceProvider SystemServiceProvider_OnSystemServiceProvider()
+		{
+			return this;
 		}
 
 		private void AddAuthenticationLayer(IApplicationBuilder app)
@@ -92,7 +100,7 @@ namespace Modulo
 				PrepareRequstData(context, requestData);
 				context.Response.StatusCode = 200;
 				var permissionProvider = Manager.GetPermissionProviderByPathParts(context, requestData.PathParts);
-				if(permissionProvider != null)
+				if (permissionProvider != null)
 				{
 					if (!permissionProvider.IsAuthenticated(context))
 					{
@@ -200,5 +208,10 @@ namespace Modulo
 				.UseStartup<Startup>();
 
 		public override List<Module> GetModuleList() => Manager.Modules.Values.ToList();
+
+		public string GetConnectionString(bool DebugMode = false)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

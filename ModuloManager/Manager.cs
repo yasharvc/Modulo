@@ -357,6 +357,7 @@ namespace ModuloManager
 			if (obj == null)
 				throw new ActionNotFoundException(requestData.PathParts);
 			obj.ModuleName = module.Manifest.ModuleName;
+			prepareContext(context,obj);
 			obj.HttpContext = context;
 			obj.HttpContext.Request.Headers["ModuleName"] = new Microsoft.Extensions.Primitives.StringValues(module.Manifest.ModuleName);
 			if(obj is AreaController)
@@ -378,6 +379,11 @@ namespace ModuloManager
 				var actionResult = invoker.InvokeMethod<IActionResult>(obj, requestData.PathParts.Action, null, requestData.GetRequestParametersDictionary());
 				return actionResult;
 			}
+		}
+
+		private void prepareContext(HttpContext context, BaseController obj)
+		{
+			context.Items[AreaController.AREA_KEY_IN_HTTP_CONTEXT] = obj.ModuleName;
 		}
 
 		private void ClearPathParts(PathParts pathParts)
