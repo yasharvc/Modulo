@@ -22,5 +22,15 @@ namespace HomeArea
 				};
 			}
 		}
+
+		public override Dictionary<string,BaseViewComponent> ViewComponents
+		{
+			get
+			{
+				return new Dictionary<string, BaseViewComponent> {
+					{ "HomePageViewComponents" , new HomePageViewComponentsViewComponent() }
+				};
+			}
+		}
 	}
 }

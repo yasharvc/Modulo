@@ -1,11 +1,154 @@
-﻿<!DOCTYPE html>
-
+﻿@using ModuloContracts.MVC
+<!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewData["Title"]</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Index</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link href="~/General/css/w3.css" rel="stylesheet" />
+	<link href="~/General/RTL/style.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="~/General/css/faa.css" rel="stylesheet" />
+	<link href="~/General/css/select2.css" rel="stylesheet" />
+
+	<style>
+		#successSnackbar {
+			visibility: hidden;
+			min-width: 250px;
+			margin-left: -125px;
+			background-color: #0b6;
+			color: #fff;
+			text-align: center;
+			border-radius: 2px;
+			padding: 16px;
+			position: fixed;
+			z-index: 1;
+			left: 50%;
+			bottom: 30px;
+			font-size: 17px;
+		}
+
+			#successSnackbar.show {
+				visibility: visible;
+				-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+				animation: fadein 0.5s, fadeout 0.5s 2.5s;
+			}
+
+		@@-webkit-keyframes fadein {
+			from {
+				bottom: 0;
+				opacity: 0;
+			}
+
+			to {
+				bottom: 30px;
+				opacity: 1;
+			}
+		}
+
+		@@keyframes fadein {
+			from {
+				bottom: 0;
+				opacity: 0;
+			}
+
+			to {
+				bottom: 30px;
+				opacity: 1;
+			}
+		}
+
+		@@-webkit-keyframes fadeout {
+			from {
+				bottom: 30px;
+				opacity: 1;
+			}
+
+			to {
+				bottom: 0;
+				opacity: 0;
+			}
+		}
+
+		@@keyframes fadeout {
+			from {
+				bottom: 30px;
+				opacity: 1;
+			}
+
+			to {
+				bottom: 0;
+				opacity: 0;
+			}
+		}
+	</style>
 </head>
-<body>
-	@RenderBody();
+<body class="w3-theme-l5" dir="rtl" style="direction:rtl">
+	<div class="w3-row">
+		<div class="w3-col w3-bar-block w3-hide-small w3-blue" style="width:200px;height:calc(dynamic);">
+			<div class="w3-container w3-dark-grey w3-center">
+				<h4>منو</h4>
+			</div>
+			@await Component.Component("HomeArea", "ModuleMenu")
+			<script>
+				function accordion(dynamic) {
+					var x = document.getElementById(dynamic);
+					if (x.className.indexOf("w3-show") == -1) {
+						x.className += " w3-show";
+						x.previousElementSibling.className += " w3-green";
+					} else {
+						x.className = x.className.replace(" w3-show", "");
+						x.previousElementSibling.className =
+							x.previousElementSibling.className.replace(" w3-green", "");
+					}
+				}
+
+			</script>
+		</div>
+		<div class="w3-rest w3-container w3-bar-block">
+			@RenderBody()
+		</div>
+	</div>
+	<br>
+	<div id="___errorModal" class="w3-modal">
+		<div class="w3-modal-content w3-animate-top w3-card-4">
+			<header class="w3-container w3-red">
+				<span onclick="document.getElementById('___errorModal').style.display='none'"
+					  class="w3-button w3-display-topleft">&times;</span>
+				<h4 class="w3-right"><i class="fa fa-warning w3-text-orange faa-flash animated"></i> <span id="___errorTitle"></span></h4>
+			</header>
+			<div class="w3-container w3-margin" id="___errorBody">
+
+			</div>
+			<footer class="w3-container">
+				&nbsp;
+			</footer>
+		</div>
+	</div>
+	<div id="successSnackbar"></div>
+	<script>
+		function openNav() {
+			var x = document.getElementById("navDemo");
+			if (x.className.indexOf("w3-show") == -1) {
+				x.className += " w3-show";
+			} else {
+				x.className = x.className.replace(" w3-show", "");
+			}
+		}
+		function showErrors(title, msg) {
+			$('#___errorTitle').html(title);
+			$('#___errorBody').html(msg);
+			document.getElementById('___errorModal').style.display = 'block';
+		}
+		function successSnack(message) {
+			var x = document.getElementById("successSnackbar");
+			x.innerHTML = message;
+			x.className = "show";
+			setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+		}
+	</script>
+	<script src="~/General/js/select2.js"></script>
+
 </body>
 </html>

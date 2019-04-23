@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amval;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.MVC;
@@ -21,7 +22,9 @@ namespace TestModule.Controllers
 		}
 		public IActionResult Index()
         {
-			return Json(new { name = "Yashae", Age = 656 });
+			WmsServiceClient client = new WmsServiceClient();
+			var x = client.GetGoodsCodingListAsync().Result;
+			return View("Index", x);
         }
 
 		[HttpPost]

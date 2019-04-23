@@ -38,7 +38,7 @@ namespace ModuloContracts.Hub
 					new DummyManifest("Dummy3","Third dummy module","Description for third dummy module")
 				};
 			else
-				return InvokationHubProvider.GetModuleList().Select(m => m.Manifest);
+				return InvokationHubProvider.GetModuleList().Where(m => m.Status == Enums.ModuleStatus.Enable).Select(m => m.Manifest);
 		}
 
 		private static string HttpPost(string BaseUrl, string FunctionPath, List<KeyValuePair<string, string>> parameters = null)

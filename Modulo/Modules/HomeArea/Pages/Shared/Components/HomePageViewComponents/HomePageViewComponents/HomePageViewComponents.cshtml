@@ -1,0 +1,18 @@
+@using ModuloContracts.MVC
+@model IEnumerable<KeyValuePair<string, Dictionary<string, ModuloContracts.MVC.BaseViewComponent>>>
+
+@foreach (var item in Model)
+{
+	<ul>
+		@item.Key:
+		@foreach (var keyval in item.Value)
+		{
+			<li>
+				<ol>
+					@(await Component.Component(item.Key, keyval.Key))
+				</ol>
+			</li>
+
+		}
+	</ul>
+}

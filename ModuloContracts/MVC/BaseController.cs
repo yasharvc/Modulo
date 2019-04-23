@@ -15,9 +15,7 @@ namespace ModuloContracts.MVC
 		public string Name { get { return GetType().Name.Replace("Controller", "", StringComparison.OrdinalIgnoreCase); } }
 		private string ViewPath { get; set; }
 
-		public new IActionResult View([CallerMemberName] string name = "") => View(name, null);
-
-		public override ViewResult View([CallerMemberName] string name = "",object model = null)
+		public new IActionResult View([CallerMemberName] string name = "",object model = null)
 		{
 			if (name == null) {
 				int i = 1;

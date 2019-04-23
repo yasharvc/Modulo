@@ -29,6 +29,7 @@ namespace ModuloManager
 		private Dictionary<string, PermissionProvider> PermissionProviders = new Dictionary<string, PermissionProvider>();
 		private readonly string DEFAULT_CONTROLLER_NAME = "Home";
 		private readonly string DEFAULT_ACTION_NAME = "Index";
+		private AreaController CurrentAreaController { get; set; }
 
 		private List<ModuleIndexData> DependencyIndex { get; set; } = new List<ModuleIndexData>();
 		public Manager()
@@ -203,7 +204,7 @@ namespace ModuloManager
 		}
 		private string GetModuleFolder(ModuloContracts.Module.Module module)
 		{
-			return Path.Combine(ManifestResolver.ModulesRootPath, module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
+			return Path.Combine(ManifestResolver.ModulesRootPath, module.Manifest.ModuleName);///module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
 		}
 		#region Upgrade & Downgrade
 		private void Downgrade(ModuloContracts.Module.Module module)
@@ -383,7 +384,10 @@ namespace ModuloManager
 
 		private void prepareContext(HttpContext context, BaseController obj)
 		{
-			context.Items[AreaController.AREA_KEY_IN_HTTP_CONTEXT] = obj.ModuleName;
+			if (obj is AreaController)
+				CurrentAreaController = (AreaController)obj;
+			if(CurrentAreaController != null)
+				context.Items[AreaController.AREA_KEY_IN_HTTP_CONTEXT] = CurrentAreaController.ModuleName;
 		}
 
 		private void ClearPathParts(PathParts pathParts)

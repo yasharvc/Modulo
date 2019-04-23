@@ -18,6 +18,7 @@ namespace ModuloContracts.Module.Interfaces
 		bool IsSystemModule { get; }
 		void OnConfigure();
 		Dictionary<string, BaseViewComponent> HomePageViewComponents { get; }
+		Dictionary<string, BaseViewComponent> ViewComponents { get; }
 		IEnumerable<Type> AreaControllers { get; }
 		ServiceMeta ServiceMeta { get; set; }
 	}

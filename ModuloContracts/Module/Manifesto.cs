@@ -44,6 +44,8 @@ namespace ModuloContracts.Module
 
 		public ServiceMeta ServiceMeta { get; set; }
 
+		public virtual Dictionary<string, BaseViewComponent> ViewComponents => new Dictionary<string, BaseViewComponent>();
+
 		public virtual void OnConfigure() { }
 	}
 
