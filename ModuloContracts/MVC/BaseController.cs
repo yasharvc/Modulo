@@ -28,7 +28,7 @@ namespace ModuloContracts.MVC
 		{
 			if (!Hub.InvocationHub.IsInModuleDebugMode)
 			{
-				ViewPath = $"~/Modules/{ModuleName.Replace("Module", "")}/Views/{Name.Replace("Controller", "", StringComparison.OrdinalIgnoreCase)}/{name}.cshtml";
+				ViewPath = $"~/Modules/{ModuleName}/Views/{Name.Replace("Controller", "", StringComparison.OrdinalIgnoreCase)}/{name}.cshtml";
 				return base.View(ViewPath, model);
 			}
 			else

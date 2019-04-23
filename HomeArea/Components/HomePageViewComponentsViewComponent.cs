@@ -14,7 +14,7 @@ namespace HomeArea.Components
 		{
 			var viewComponents = ModuloContracts.Hub.InvocationHub.GetModules().Select(m => 
 			new KeyValuePair<string,Dictionary<string,BaseViewComponent>>( m.ModuleName, m.HomePageViewComponents ));
-			return await Task.FromResult(GetView("HomeArea", "HomePageViewComponents", viewComponents));
+			return await Task.FromResult(GetView("HomeArea", viewComponents));
 		}
 	}
 }

@@ -204,7 +204,7 @@ namespace ModuloManager
 		}
 		private string GetModuleFolder(ModuloContracts.Module.Module module)
 		{
-			return Path.Combine(ManifestResolver.ModulesRootPath, module.Manifest.ModuleName);///module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
+			return Path.Combine(ManifestResolver.ModulesRootPath, module.Manifest.ModuleName);
 		}
 		#region Upgrade & Downgrade
 		private void Downgrade(ModuloContracts.Module.Module module)
@@ -478,7 +478,7 @@ namespace ModuloManager
 				});
 			foreach (var dp in DependencyIndex)
 			{
-				var module = InspectFolder(Directory.GetDirectories($"{ManifestResolver.ModulesRootPath}/").FirstOrDefault(m => m.ToLower().EndsWith(dp.ModuleName.ToLower().Replace("module", ""))));
+				var module = InspectFolder(Directory.GetDirectories($"{ManifestResolver.ModulesRootPath}/").FirstOrDefault(m => m.ToLower().EndsWith(dp.ModuleName.ToLower())));
 				AddModule(module);
 			}
 		}

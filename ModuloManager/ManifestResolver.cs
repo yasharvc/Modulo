@@ -29,7 +29,7 @@ namespace ModuloManager
 		}
 		public static string GetModuleFolder(Module module)
 		{
-			return Path.Combine(ModulesRootPath, module.Manifest.ModuleName.Replace("Module", "", StringComparison.OrdinalIgnoreCase));
+			return Path.Combine(ModulesRootPath, module.Manifest.ModuleName);
 		}
 	}
 }
