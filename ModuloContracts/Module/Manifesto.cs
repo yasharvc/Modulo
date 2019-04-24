@@ -46,6 +46,8 @@ namespace ModuloContracts.Module
 
 		public virtual Dictionary<string, BaseViewComponent> ViewComponents => new Dictionary<string, BaseViewComponent>();
 
+		public virtual BaseViewComponent GetCustomViewComponent(string name) => null;
+
 		public virtual void OnConfigure() { }
 	}
 

@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using ModuloContracts.Data;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 
@@ -25,7 +22,13 @@ namespace WebUtility
 		{
 			builder.ConfigureServices(services =>
 			{
-				services.AddMvc();
+				services.AddMvc().AddJsonOptions(options =>
+				{
+					options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+					options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
+					options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+					options.SerializerSettings.ObjectCreationHandling = ObjectCreationHandling.Replace;
+				});
 				if (singeltons != null)
 				{
 					foreach (var singelton in singeltons)

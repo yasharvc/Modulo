@@ -21,5 +21,7 @@ namespace ModuloContracts.Module.Interfaces
 		Dictionary<string, BaseViewComponent> ViewComponents { get; }
 		IEnumerable<Type> AreaControllers { get; }
 		ServiceMeta ServiceMeta { get; set; }
+
+		BaseViewComponent GetCustomViewComponent(string name);
 	}
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Utility;
 
 namespace DllLoader
@@ -67,6 +68,7 @@ namespace DllLoader
 				res = Extenstions.FromObject<T>(resultObject);
 			return res;
 		}
+
 
 		private Dictionary<string,object> ConvertParameteres(MethodInfo method, Dictionary<string,object> parameters)
 		{

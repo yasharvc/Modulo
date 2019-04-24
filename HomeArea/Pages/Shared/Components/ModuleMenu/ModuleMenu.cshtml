@@ -7,7 +7,7 @@
 			<ol>
 				@foreach (var menu in manifest.Menus)
 				{
-				<li><a href="@manifest.ModuleName/@menu.Link.Controller.Name.Replace("Controller","",StringComparison.OrdinalIgnoreCase)/@menu.Link.Action">@menu.Title</a></li>
+				<li><a href="/@manifest.ModuleName/@menu.Link.Controller.Name.Replace("Controller","",StringComparison.OrdinalIgnoreCase)/@menu.Link.Action">@menu.Title</a></li>
 				}
 			</ol>
 	</li>

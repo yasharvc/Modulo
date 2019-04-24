@@ -13,16 +13,6 @@ namespace HomeArea
 
 		public override string Description => "Home area controller";
 
-		public override Dictionary<string, BaseViewComponent> HomePageViewComponents
-		{
-			get
-			{
-				return new Dictionary<string, BaseViewComponent> {
-					{ "ModuleMenu", new ModulesMenuViewComponent() }
-				};
-			}
-		}
-
 		public override Dictionary<string,BaseViewComponent> ViewComponents
 		{
 			get
@@ -31,6 +21,13 @@ namespace HomeArea
 					{ "HomePageViewComponents" , new HomePageViewComponentsViewComponent() }
 				};
 			}
+		}
+
+		public override BaseViewComponent GetCustomViewComponent(string name)
+		{
+			if (name.Equals("ModuleMenu", System.StringComparison.OrdinalIgnoreCase))
+				return new ModulesMenuViewComponent();
+			return null;
 		}
 	}
 }

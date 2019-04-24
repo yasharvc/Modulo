@@ -16,6 +16,8 @@ namespace Modulo.Components
 				cmp = manifest.HomePageViewComponents[viewComponentName];
 			else if (manifest.ViewComponents.ContainsKey(viewComponentName))
 				cmp = manifest.ViewComponents[viewComponentName];
+			else
+				cmp = manifest.GetCustomViewComponent(viewComponentName);
 			if (cmp != null)
 			{
 				HttpContext.Request.Headers["ModuleName"] = new Microsoft.Extensions.Primitives.StringValues(moduleName);

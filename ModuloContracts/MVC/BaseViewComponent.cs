@@ -15,16 +15,16 @@ namespace ModuloContracts.MVC
 			HttpContext = base.HttpContext;
 		}
 
-		public IViewComponentResult GetView(string ModuleName, object model = null) => GetView(ModuleName, null, null);
+		public IViewComponentResult GetView(string ModuleName, object model = null) => GetView(ModuleName, null, model);
 
 		public IViewComponentResult GetView(string ModuleName, string viewName = null, object model = null)
 		{
 			var ViewComponentName = ((ViewComponentAttribute)GetType().GetCustomAttribute(typeof(ViewComponentAttribute))).Name;
 			if (string.IsNullOrEmpty(viewName))
 				viewName = ViewComponentName;
-			return GetView(ModuleName, ViewComponentName, viewName, model);
+			return _GetView(ModuleName, ViewComponentName, viewName, model);
 		}
-		private IViewComponentResult GetView(string ModuleName, string ViewComponentName, string ViewName, object model = null)
+		private IViewComponentResult _GetView(string ModuleName, string ViewComponentName, string ViewName, object model = null)
 		{
 			return View($"~/Modules/{ModuleName}/Pages/Shared/Components/{ViewComponentName}/{ViewName}.cshtml", model);
 		}

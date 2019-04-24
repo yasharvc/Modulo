@@ -33,7 +33,7 @@
   <ItemGroup>
     <Folder Include="Areas\ModuleAdmin\Data\" />
     <Folder Include="Areas\ModuleAdmin\Models\" />
-    <Folder Include="Modules\" />
+    <Folder Include="Modules\Temp\" />
   </ItemGroup>
 
 </Project>
