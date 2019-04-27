@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Amval;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModuloContracts.MVC;
@@ -25,9 +24,8 @@ namespace TestModule.Controllers
 		}
 		public IActionResult Index()
         {
-			WebService ws = new WebService("http://shonizit:180/WmsService.svc", "GetGoodsCodingList");
-			ws.Invoke();
-			return View("Index",ws.ResultString);
+			WmsService service = new WmsService();
+			return View("Index",service.GetGoodsCodingList());
         }
 
 		[HttpPost]

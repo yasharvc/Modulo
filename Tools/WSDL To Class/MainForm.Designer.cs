@@ -32,7 +32,6 @@
 			this.WSDLUrlTextBox = new System.Windows.Forms.TextBox();
 			this.WSDLDownloadButton = new System.Windows.Forms.Button();
 			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.TypesListBox = new System.Windows.Forms.ListBox();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -76,25 +75,14 @@
 			this.textBox1.Name = "textBox1";
 			this.textBox1.ReadOnly = true;
 			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBox1.Size = new System.Drawing.Size(716, 168);
+			this.textBox1.Size = new System.Drawing.Size(716, 368);
 			this.textBox1.TabIndex = 3;
-			// 
-			// TypesListBox
-			// 
-			this.TypesListBox.FormattingEnabled = true;
-			this.TypesListBox.ItemHeight = 16;
-			this.TypesListBox.Location = new System.Drawing.Point(12, 233);
-			this.TypesListBox.Name = "TypesListBox";
-			this.TypesListBox.ScrollAlwaysVisible = true;
-			this.TypesListBox.Size = new System.Drawing.Size(716, 84);
-			this.TypesListBox.TabIndex = 4;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(740, 438);
-			this.Controls.Add(this.TypesListBox);
 			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.WSDLDownloadButton);
 			this.Controls.Add(this.WSDLUrlTextBox);
@@ -114,7 +102,6 @@
 		private System.Windows.Forms.TextBox WSDLUrlTextBox;
 		private System.Windows.Forms.Button WSDLDownloadButton;
 		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.ListBox TypesListBox;
 	}
 }
 

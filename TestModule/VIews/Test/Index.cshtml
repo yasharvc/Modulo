@@ -1,12 +1,11 @@
-@model String
+@model IEnumerable<TestModule.WmsService.GoodsCoding>
 @using ModuloContracts.MVC
 @{ 
 	Layout = Html.GetAreaLayout();
 }
-@*<ul>
+<ul>
 	@foreach (var item in Model)
 	{
 		<li>@item.DiagramName - @item.GoodsFamilyName - @item.GoodsGroupName</li>
 	}
-</ul>*@
-@Model
+</ul>
