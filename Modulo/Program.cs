@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 using Modulo.Classes;
-using ModuloContracts;
 using ModuloContracts.Data;
 using ModuloContracts.Exceptions.Module;
 using ModuloContracts.Exceptions.SystemExceptions;

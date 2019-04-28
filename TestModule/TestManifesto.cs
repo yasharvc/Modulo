@@ -22,10 +22,11 @@ namespace TestModule
 				List<IMenu> res = new List<IMenu>();
 				IMenu menu = new Menu {
 					 Icon = "fa fa-cogs",
-					 Link = new Link { Controller = typeof(TestController), Action="Index" },
+					 Link = new Link { Action="Index" },
 					 MenuLegend = MenuLegendName.Defination,
 					 Title = "تست لینک"
 				};
+				menu.Link.SetController(new TestController());
 				res.Add(menu);
 				return res;
 			}

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+using ModuloManager;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,7 +10,8 @@ namespace Modulo.Components
 	{
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
-			return await Task.FromResult((IViewComponentResult)View("AdminMenu"));
+			var manage = HttpContext.RequestServices.GetService(typeof(Manager)) as Manager;
+			return await Task.FromResult((IViewComponentResult)View("AdminMenu",manage.Modules.Values.Where(m => m.Status == ModuloContracts.Enums.ModuleStatus.Enable)));
 		}
 	}
 }

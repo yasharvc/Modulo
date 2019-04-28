@@ -53,7 +53,31 @@
 					<a href="/ModuleAdmin/Security/Logout">خروج <i class="fas fa-sign-out-alt"></i></a>
 				</div>
 				<nav class="navbar-sidebar2">
-					@(await Component.InvokeAsync("AdminMenu"))
+					<ul class="list-unstyled navbar__list">
+						<li class="has-sub">
+							<a class="js-arrow" href="#">
+								<i class="fas fa-plug"></i>ماژول ها
+								<span class="arrow">
+									<i class="fas fa-angle-down"></i>
+								</span>
+							</a>
+							<ul class="list-unstyled navbar__sub-list js-sub-list">
+								<li>
+									<a href="/ModuleAdmin/Panel/Status">
+										<i class="fas fa-tachometer-alt"></i>وضعیت کلی
+									</a>
+								</li>
+								<li>
+									<a href="/ModuleAdmin/Panel/Upload">
+										<i class="fas fa-upload"></i>آپلود
+									</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							@(await Component.InvokeAsync("AdminMenu"))
+						</li>
+					</ul>
 				</nav>
 			</div>
 		</aside>

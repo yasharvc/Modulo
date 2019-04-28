@@ -13,7 +13,7 @@ namespace ModuloContracts.Module.Interfaces
 		Version Version { get; }
 		IEnumerable<ITest> Tests { get; }
 		IEnumerable<Dependency> Dependencies { get; }
-		//IAdminPanel Admin { get; set; }
+		IAdminPanel Admin { get; }
 		IEnumerable<IMenu> Menus { get; }
 		bool IsSystemModule { get; }
 		void OnConfigure();

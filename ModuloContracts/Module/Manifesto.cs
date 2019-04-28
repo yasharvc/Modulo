@@ -49,6 +49,7 @@ namespace ModuloContracts.Module
 		public virtual BaseViewComponent GetCustomViewComponent(string name) => null;
 
 		public virtual void OnConfigure() { }
+		public virtual IAdminPanel Admin { get { return new AdminPanel(); } }
 	}
 
 	public class DummyManifest : Manifesto
@@ -62,6 +63,8 @@ namespace ModuloContracts.Module
 		public override string Title => title;
 
 		public override string Description => desc;
+
+		public override IAdminPanel Admin { get { return new AdminPanel(); } }
 
 		public DummyManifest(string name) : this(name, "", "") { }
 		public DummyManifest(string name, string title) : this(name, title, "") { }

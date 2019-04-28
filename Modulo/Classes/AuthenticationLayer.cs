@@ -35,7 +35,7 @@ namespace Modulo.Classes
 		private string GetLoginPath(HttpContext context)
 		{
 			var path = context.Request.Path;
-			if (path.StartsWithSegments(new PathString("/ModuleAdmin/")))
+			if (path.ToString().StartsWith("/ModuleAdmin", StringComparison.OrdinalIgnoreCase))
 				return LoginURLs.FirstOrDefault(l => l.StartsWith("/ModuleAdmin/", StringComparison.OrdinalIgnoreCase));
 			return "";
 		}
