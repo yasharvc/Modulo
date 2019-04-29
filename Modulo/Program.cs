@@ -53,7 +53,8 @@ namespace Modulo
 					app.UseExceptionHandler(GetErrorPage());
 				app.UseStaticFiles();
 				AddPluginsRouting(app);
-				AddAuthenticationLayer(app);
+				//AddAuthenticationLayer(app);
+				AddModuleAdminPermissionProvider();
 				app.UseMvc(routes =>
 				{
 					routes.MapRoute("areaRoute", "{area:exists}/{controller=Panel}/{action=Index}/{id?}");
@@ -66,6 +67,8 @@ namespace Modulo
 				InvocationHub.InvokationHubProvider = this;
 			}).Build();
 		}
+
+		private void AddModuleAdminPermissionProvider() => Manager.AddPermissionProvider("ModuleAdmin", new ModuleAdminPermissionProvider());
 
 		private ISystemServiceProvider SystemServiceProvider_OnSystemServiceProvider()
 		{

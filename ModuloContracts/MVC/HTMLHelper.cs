@@ -35,7 +35,14 @@ namespace ModuloContracts.MVC
 			else
 				return "_Layout";
 		}
-
+		public static string GetAdminLayout(this IHtmlHelper helper)
+		{
+			var context = helper.ViewContext.HttpContext;
+			if (SystemServiceProvider.IsServiceProviderPresent && context.Items.ContainsKey(AreaController.AREA_KEY_IN_HTTP_CONTEXT))
+				return $"~/Areas/ModuleAdmin/Views/Shared/_Layout.cshtml";
+			else
+				return "_Layout";
+		}
 		public static IHtmlContent GetAreaCSS(this IHtmlHelper helper, params string[] filePathes)
 		{
 			var style = string.Join("\r\n", filePathes.Select(m => ReadAreaFile(helper, m)).ToList());

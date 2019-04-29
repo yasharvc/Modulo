@@ -68,8 +68,7 @@ namespace DllLoader
 				res = Extenstions.FromObject<T>(resultObject);
 			return res;
 		}
-
-
+		
 		private Dictionary<string,object> ConvertParameteres(MethodInfo method, Dictionary<string,object> parameters)
 		{
 			var methodParameteres = method.GetParameters();

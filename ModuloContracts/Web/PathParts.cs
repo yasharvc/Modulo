@@ -6,6 +6,8 @@ namespace ModuloContracts.Web
 {
 	public class PathParts
 	{
+		private static readonly string DEFAULT_CONTROLLER_NAME = "Home";
+		private static readonly string DEFAULT_ACTION_NAME = "Index";
 		public string Area { get; set; } = "";
 		public string ModuleName { get; set; } = "";
 		public string Controller { get; set; } = "";
@@ -42,5 +44,14 @@ namespace ModuloContracts.Web
 		}
 
 		public static implicit operator string(PathParts p) => p.ToString();
+
+		public void ClearPathParts()
+		{
+			if (IsEmpty())
+			{
+				Action = DEFAULT_ACTION_NAME;
+				Controller = DEFAULT_CONTROLLER_NAME;
+			}
+		}
 	}
 }

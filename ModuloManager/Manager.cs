@@ -26,9 +26,7 @@ namespace ModuloManager
 		private readonly List<string> SpecialFolders = new List<string> { "temp" };
 		public Dictionary<string, ModuloContracts.Module.Module> Modules { get; private set; } = new Dictionary<string, ModuloContracts.Module.Module>();
 		private Dictionary<string, List<AreaController>> AreaControllers = new Dictionary<string, List<AreaController>>();
-		private Dictionary<string, PermissionProvider> PermissionProviders = new Dictionary<string, PermissionProvider>();
-		private readonly string DEFAULT_CONTROLLER_NAME = "Home";
-		private readonly string DEFAULT_ACTION_NAME = "Index";
+		private Dictionary<string, PermissionProvider> PermissionProviders { get; set; } = new Dictionary<string, PermissionProvider>();
 		private AreaController CurrentAreaController { get; set; }
 
 		private List<ModuleIndexData> DependencyIndex { get; set; } = new List<ModuleIndexData>();
@@ -79,6 +77,8 @@ namespace ModuloManager
 
 			return false;
 		}
+
+		public void AddPermissionProvider(string name, PermissionProvider moduleAdminPermissionProvider) => PermissionProviders[name] = moduleAdminPermissionProvider;
 
 		private void ClearModuleFolder(ModuloContracts.Module.Module module)
 		{
@@ -351,7 +351,7 @@ namespace ModuloManager
 
 		public IActionResult InvokeAction(HttpContext context,RequestData requestData, ModuloContracts.Module.Module module)
 		{
-			ClearPathParts(requestData.PathParts);
+			requestData.PathParts.ClearPathParts();
 			Loader loader = new Loader(module.PathToDll);
 			var invoker = new Invoker(loader);
 			var obj = invoker.CreateInstance<BaseController>(loader.GetFullClassName(requestData.PathParts.Controller + "Controller"));
@@ -390,14 +390,7 @@ namespace ModuloManager
 				context.Items[AreaController.AREA_KEY_IN_HTTP_CONTEXT] = CurrentAreaController.ModuleName;
 		}
 
-		private void ClearPathParts(PathParts pathParts)
-		{
-			if (pathParts.IsEmpty())
-			{
-				pathParts.Action = DEFAULT_ACTION_NAME;
-				pathParts.Controller = DEFAULT_CONTROLLER_NAME;
-			}
-		}
+		
 
 		private IEnumerable<Type> GetServieOrModels(Assembly asm)
 		{
