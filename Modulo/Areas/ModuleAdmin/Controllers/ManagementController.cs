@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Modulo.Classes;
 using ModuloManager;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Modulo.Areas.ModuleAdmin.Controllers
 {
@@ -31,38 +32,23 @@ namespace Modulo.Areas.ModuleAdmin.Controllers
 
 	public class UserInfoAttribute : ResultFilterAttribute
 	{
-		protected readonly string PathToLogin = "/ModuleAdmin/Security/Login";
+		ModuleAdminPermissionProvider perm = new ModuleAdminPermissionProvider();
 		public UserInfoAttribute() { }
-		public UserInfoAttribute(string pathToLogin)
-		{
-			PathToLogin = pathToLogin;
-		}
-		protected string GetUserToken(HttpRequest request)
-		{
-			return request.Cookies[AuthenticationLayer.UserTokenKey];
-		}
-		protected User GetUser(HttpRequest request)
-		{
-			return User.GetUserByToken(GetUserToken(request));
-		}
 
 		public override void OnResultExecuting(ResultExecutingContext context)
 		{
 			base.OnResultExecuting(context);
-			var user = GetUser(context.HttpContext.Request);
-
-			if (user != null && user.ID > 0 && new Authentication().IsTokenValid(GetUserToken(context.HttpContext.Request)))
+			if (perm.IsAuthenticated(context.HttpContext))
 			{
-				((Controller)context.Controller).ViewData["User"] = user;
-				new Authentication().ExtendTokenTime(GetUserToken(context.HttpContext.Request));
+				//((Controller)context.Controller).ViewData["User"] = perm.GetUser(context.HttpContext);
+				perm.Extend(context.HttpContext);
 			}
 			else
 			{
-				var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
-				if (controllerActionDescriptor != null && controllerActionDescriptor.MethodInfo.GetCustomAttribute(typeof(AllowAnonymousAttribute)) != null)
+				if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor && controllerActionDescriptor.MethodInfo.GetCustomAttribute(typeof(AllowAnonymousAttribute)) != null)
 					return;
-				context.HttpContext.Response.Redirect(PathToLogin);
 				context.Cancel = true;
+				perm.RedirectToAuthenticationPath(context.HttpContext);
 			}
 		}
 	}

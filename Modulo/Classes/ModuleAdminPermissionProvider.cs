@@ -10,12 +10,11 @@ namespace Modulo.Classes
 	{
 		private const string LoginPath = "ModuleAdmin/Security/Login";
 		private static readonly string HomeAreaUserToken = AuthenticationLayer.UserTokenKey;
-		private string GetToken(HttpContext context)
+		public string GetToken(HttpContext context)
 		{
 			if (context == null || context.Request == null || context.Request.Cookies[HomeAreaUserToken] == null || !context.Request.Cookies.ContainsKey(HomeAreaUserToken)) return "";
 			return context.Request.Cookies[HomeAreaUserToken] ?? "";
 		}
-
 		public bool Authenticate(HttpContext context , string userName, string password)
 		{
 			var auth = new Authentication();
@@ -27,6 +26,13 @@ namespace Modulo.Classes
 			}
 			return false;
 		}
+
+		public bool Extend(HttpContext context)
+		{
+			return new Authentication().ExtendTokenTime(GetToken(context));
+		}
+
+		public User GetUser(HttpContext ctx) => User.GetUserByToken(GetToken(ctx));
 
 		public override void Authenticate(HttpContext context, string token) => context.Response.Cookies.Append(HomeAreaUserToken, token);
 
@@ -41,11 +47,14 @@ namespace Modulo.Classes
 			if (context != null)
 			{
 				var auth = new Authentication();
-				return auth.IsTokenValid(GetToken(context));
+				bool result = auth.IsTokenValid(GetToken(context));
+				if (result)
+					context.Items["_USER_"] = GetUser(context);
+				return result;
 			}
 			return false;
 		}
-
+		public void RedirectToAuthenticationPath(HttpContext context) => context.Response.Redirect(LoginPath);
 		public override async Task RedirectToAuthenticationPathAsync(HttpContext context) => await Task.Run(() => context.Response.Redirect("/ModuleAdmin"));
 
 		public override bool IsInScope(PathParts path) => path.Area.Equals("ModuleAdmin", StringComparison.OrdinalIgnoreCase);
